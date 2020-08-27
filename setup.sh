@@ -36,11 +36,11 @@ sudo apt update && sudo apt upgrade -y
 echo "Server updated"
 
 IP=`curl -s icanhazip.com`
-echo -e "Server Public IP found: ${Purple}"${IP}${Rst}
+echo -e "Server Public IP: ${Purple}"${IP}${Rst}
 
 echo "Installing Apache 2"
 sudo apt install apache2 -y
-echo -e ${Purple}`apache2 -v`"${Rst}"
+echo -e ${Purple}Apache `apache2 -v`"${Rst}"
 
 echo "Checking UFW"
 if sudo ufw status | grep -q inactive$; then
@@ -63,11 +63,11 @@ else
 fi
 
 #TODO(pavank): try to check if site is available at ${IP}
-read -p "Total sites you want to setup (number only)? " numb
+read -p "Number of sites to setup (number only)? " numb
 temp=0
 while [ $temp != $numb ]
 do
-    echo "${Green}===>${Rst} Site "`expr $temp + 1`" site"
+    echo -e "${Green}===>${Rst} Setting up site `expr $temp + 1`"
     read -p "Site URL (do not add www, eg input - helloworld.com): " readSiteURL
 
     #storing urls so it can be used when adding SSL certificate
@@ -82,16 +82,8 @@ do
 
     echo -e "${Green}Site ${siteURL[$temp]} created, configuring${Rst}"
     read -p "Email (to receive notifications for ${siteURL[$temp]}, leave blank if not required):" siteEmail
-    sudo echo "
-        <VirtualHost *:80>
-            ServerAdmin $siteEmail
-            ServerName ${siteURL[$temp]}
-            ServerAlias www.${siteURL[$temp]}
-            DocumentRoot /var/www/${siteURL[$temp]}/public_html
-            ErrorLog ${APACHE_LOG_DIR}/error.log
-            CustomLog ${APACHE_LOG_DIR}/access.log combined
-        </VirtualHost>
-    " > /etc/apache2/sites-available/${siteURL[$temp]}.conf
+    #TODO(pavank): set default $siteEmail
+    sudo echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName ${siteURL[$temp]}\n\tServerAlias www.${siteURL[$temp]}\n\tDocumentRoot /var/www/${siteURL[$temp]}/public_html\n\tErrorLog ${APACHE_LOG_DIR}/error.log\n\tCustomLog ${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" > /etc/apache2/sites-available/${siteURL[$temp]}.conf
 
     echo "Enabling site configuration"
     sudo a2ensite /var/www/html/${siteURL[$temp]}.conf
@@ -104,7 +96,7 @@ sudo a2dissite /var/www/html/000-default.conf
 echo "Restarting Apache2 to activate new configuration"
 sudo systemctl restart apache2
 
-echo -e "${Bold}${Green}Success! Your sites have been added successfully. Visit below links to confirm"
+echo -e "${Bold}${Green}Success! Your sites have been added successfully. Visit below links to confirm${Rst}"
 for a in 0 1
 do
     echo -e "${Green}http://"${siteURL[$a]}
