@@ -86,12 +86,12 @@ do
     echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName ${siteURL[$temp]}\n\tServerAlias www.${siteURL[$temp]}\n\tDocumentRoot /var/www/${siteURL[$temp]}/public_html\n\tErrorLog ${APACHE_LOG_DIR}/error.log\n\tCustomLog ${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/${siteURL[$temp]}.conf
 
     echo "Enabling site configuration"
-    sudo a2ensite /etc/apache2/sites-available/${siteURL[$temp]}.conf
+    sudo a2ensite ${siteURL[$temp]}.conf
     temp=`expr $temp + 1`
 done
 
 echo "Disabling default site (/var/www/html)"
-sudo a2dissite /etc/apache2/sites-available/000-default.conf
+sudo a2dissite 000-default.conf
 
 echo "Restarting Apache2 to activate new configuration"
 sudo systemctl restart apache2
