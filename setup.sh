@@ -78,7 +78,7 @@ do
     sudo chmod -R 755 /var/www
 
     #create fake page for temporary viewing
-    sudo echo "<h1>Server "`expr $temp + 1`" setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" | sudo tee /var/www/${siteURL[$temp]}/public_html/index.html
+    sudo echo "<h1>Server "`expr $temp + 1`" setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" > /var/www/${siteURL[$temp]}/public_html/index.html
 
     echo -e "${Green}Site ${siteURL[$temp]} created, configuring${Rst}"
     read -p "Email (to receive notifications for ${siteURL[$temp]}, leave blank if not required):" siteEmail
@@ -98,7 +98,7 @@ sudo systemctl restart apache2
 
 echo -e "${Bold}${Green}Success! Your sites have been added successfully. Visit below links to confirm${Rst}"
 temp=0
-while [ $temp != $numb]
+while [ $temp != $numb ]
 do
     echo -e "${Green}http://"${siteURL[$a]}
     temp=`expr $temp + 1`
