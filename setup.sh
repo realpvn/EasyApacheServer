@@ -78,12 +78,12 @@ do
     sudo chmod -R 755 /var/www
 
     #create fake page for temporary viewing
-    sudo echo "<h1>Server "`expr $temp + 1`" setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" > /var/www/${siteURL[$temp]}/public_html/index.html
+    sudo echo "<h1>Server "`expr $temp + 1`" setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" | sudo tee /var/www/${siteURL[$temp]}/public_html/index.html
 
     echo -e "${Green}Site ${siteURL[$temp]} created, configuring${Rst}"
     read -p "Email (to receive notifications for ${siteURL[$temp]}, leave blank if not required):" siteEmail
     #TODO(pavank): set default $siteEmail
-    sudo echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName ${siteURL[$temp]}\n\tServerAlias www.${siteURL[$temp]}\n\tDocumentRoot /var/www/${siteURL[$temp]}/public_html\n\tErrorLog ${APACHE_LOG_DIR}/error.log\n\tCustomLog ${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" > /etc/apache2/sites-available/${siteURL[$temp]}.conf
+    echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName ${siteURL[$temp]}\n\tServerAlias www.${siteURL[$temp]}\n\tDocumentRoot /var/www/${siteURL[$temp]}/public_html\n\tErrorLog ${APACHE_LOG_DIR}/error.log\n\tCustomLog ${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" > /etc/apache2/sites-available/${siteURL[$temp]}.conf
 
     echo "Enabling site configuration"
     sudo a2ensite /var/www/html/${siteURL[$temp]}.conf
@@ -97,9 +97,10 @@ echo "Restarting Apache2 to activate new configuration"
 sudo systemctl restart apache2
 
 echo -e "${Bold}${Green}Success! Your sites have been added successfully. Visit below links to confirm${Rst}"
-for a in 0 1
+temp=0
+while [ $temp != $numb]
 do
     echo -e "${Green}http://"${siteURL[$a]}
+    temp=`expr $temp + 1`
 done
-
 #TODO(pavank): add SSL certificate setup if required
