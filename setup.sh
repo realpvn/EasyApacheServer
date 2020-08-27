@@ -39,9 +39,8 @@ IP=`curl -s icanhazip.com`
 echo -e "Server Public IP found: ${Purple}"${IP}${Rst}
 
 echo "Installing Apache 2"
-sudo apt install apache2
-echo -e "Apache version installed: ${Purple}"`apache2 -v`"${Rst}"
-sudo ufw allow 'Apache'
+sudo apt install apache2 -y
+echo -e ${Purple}`apache2 -v`"${Rst}"
 
 echo "Checking UFW"
 if sudo ufw status | grep -q inactive$; then
@@ -51,7 +50,7 @@ if sudo ufw status | grep -q inactive$; then
     while true; do
         read -p "Do you want to enable (Yy/Nn)? " yn
         case $yn in
-            [Yy]* ) echo "XXX Enable ufw";
+            [Yy]* ) sudo ufw enable;
                     sudo ufw allow ssh;
                     sudo ufw allow Apache;
                     break;;
@@ -68,7 +67,7 @@ read -p "Total sites you want to setup (number only)? " numb
 temp=0
 while [ $temp != $numb ]
 do
-    echo "===> Now Setting up "`expr $temp + 1`" site"
+    echo "${Green}===>${Rst} Site "`expr $temp + 1`" site"
     read -p "Site URL (do not add www, eg input - helloworld.com): " readSiteURL
 
     #storing urls so it can be used when adding SSL certificate
@@ -79,9 +78,9 @@ do
     sudo chmod -R 755 /var/www
 
     #create fake page for temporary viewing
-    sudo echo "<h1>Server "`expr $temp + 1`" setup by XXXXXXXXXX </h1>" > /var/www/${siteURL[$temp]}/public_html/index.html
+    sudo echo "<h1>Server "`expr $temp + 1`" setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" > /var/www/${siteURL[$temp]}/public_html/index.html
 
-    echo -e "${Green}Site ${siteURL[$temp]} created, configuring"
+    echo -e "${Green}Site ${siteURL[$temp]} created, configuring${Rst}"
     read -p "Email (to receive notifications for ${siteURL[$temp]}, leave blank if not required):" siteEmail
     sudo echo "
         <VirtualHost *:80>
@@ -95,12 +94,12 @@ do
     " > /etc/apache2/sites-available/${siteURL[$temp]}.conf
 
     echo "Enabling site configuration"
-    sudo a2ensite ${siteURL[$temp]}.conf
+    sudo a2ensite /var/www/html/${siteURL[$temp]}.conf
     temp=`expr $temp + 1`
 done
 
 echo "Disabling default site (/var/www/html)"
-sudo a2dissite 000-default.conf
+sudo a2dissite /var/www/html/000-default.conf
 
 echo "Restarting Apache2 to activate new configuration"
 sudo systemctl restart apache2
