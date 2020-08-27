@@ -82,6 +82,9 @@ do
 
     echo -e "${Green}Site ${siteURL[$temp]} created, configuring${Rst}"
     read -p "Email (to receive notifications for ${siteURL[$temp]}, leave blank if not required):" siteEmail
+    if [ -z $siteEmail ]; then
+        siteEmail=dev@localhost
+    fi
     #TODO(pavank): set default $siteEmail
     echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName ${siteURL[$temp]}\n\tServerAlias www.${siteURL[$temp]}\n\tDocumentRoot /var/www/${siteURL[$temp]}/public_html\n\tErrorLog ${APACHE_LOG_DIR}/error.log\n\tCustomLog ${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/${siteURL[$temp]}.conf
 
