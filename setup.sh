@@ -98,7 +98,9 @@ sudo a2dissite 000-default.conf
 echo "Restarting Apache2 to activate new configuration"
 sudo systemctl restart apache2
 
-echo -e "${Bold}${Green}Success! Your sites have been added successfully. Visit below links to confirm${Rst}"
+echo -e "${Bold}${Green}Success! Your sites have been added successfully."
+echo "Point your domains A record to $IP and after DNS propagation everything should be working fine."
+echo "Sites added and configured are:${Rst}"
 temp=0
 while [ $temp != $numb ]
 do
