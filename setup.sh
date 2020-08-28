@@ -73,19 +73,23 @@ do
     #storing urls so it can be used when adding SSL certificate
     siteURL[$temp]=$readSiteURL
 
-    sudo mkdir -p /var/www/$siteURL/public_html
-    sudo chown -R $USER:$USER /var/www/${siteURL[$temp]}/public_html
+    #used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
+    siteNameNoTLD=`echo $siteURL[$temp] | cut -d'.' -f1`
+
+    sudo mkdir -p /var/www/$siteNameNoTLD
+    sudo chown -R $USER:$USER /var/www/$siteNameNoTLD
     sudo chmod -R 755 /var/www
 
     #create fake page for temporary viewing
-    sudo echo "<h1>Server "`expr $temp + 1`" setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" > /var/www/${siteURL[$temp]}/public_html/index.html
+    sudo echo "<h1>Server "`expr $temp + 1`" setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" > /var/www/$siteNameNoTLD/index.html
 
     echo -e "${Green}Site ${siteURL[$temp]} created, configuring${Rst}"
     read -p "Email (to receive notifications for ${siteURL[$temp]}, leave blank if not required):" siteEmail
     if [ -z $siteEmail ]; then
         siteEmail=dev@localhost
     fi
-    echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName ${siteURL[$temp]}\n\tServerAlias www.${siteURL[$temp]}\n\tDocumentRoot /var/www/${siteURL[$temp]}/public_html\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/${siteURL[$temp]}.conf
+    #TODO(pavank): set default $siteEmail
+    echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName ${siteURL[$temp]}\n\tServerAlias www.${siteURL[$temp]}\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/${siteURL[$temp]}.conf
 
     echo "Enabling site configuration"
     sudo a2ensite ${siteURL[$temp]}.conf
