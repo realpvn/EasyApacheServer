@@ -117,7 +117,7 @@ do
                     temp=`expr $temp + 1`
                 done
                 
-                echo "99) Exit${Rst}"
+                echo -e "99) Exit${Rst}"
                 read -p "Select site to apply SSL (eg to exit: 99):" sslSiteSelect
 
                 if [ $sslSiteSelect == 99 ]
