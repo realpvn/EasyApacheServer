@@ -47,7 +47,8 @@ if sudo ufw status | grep -q inactive$; then
     echo -e "${Red}UFW is disabled. You need to enabled it to continue...${Rst}"
     
     # loop until the answer is yes(Yy) or no(Nn)
-    while true; do
+    while true
+    do
         read -p "Do you want to enable (Yy/Nn)? " yn
         case $yn in
             [Yy]* ) sudo ufw enable;
@@ -101,13 +102,47 @@ sudo a2dissite 000-default.conf
 echo "Restarting Apache2 to activate new configuration"
 sudo systemctl restart apache2
 
-echo -e "${Bold}${Green}Success! Your sites have been added successfully."
+echo -e "${Bold}${Green}Success! Your sites have been added successfully.${Rst}"
+#TODO(pavank): add SSL certificate setup if required
+
+while true
+do
+    read -p "Do you also want to install SSL/TSL certificate (Yy/Nn)?" sslReq
+    case $sslReq in
+        [Yy]* ) sudo add-apt-repository ppa:certbot/certbot
+                sudo apt install python-certbot-apache
+                
+                temp=0
+                while [ $temp != $numb ]
+                do
+                    if [ ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
+                    then
+                        echo -e "${Purple}`expr $temp + 1`) ${siteURL[$a]}"
+                    fi
+                    temp=`expr $temp + 1`
+                done
+                
+                echo "99 ) Exit"
+                read -p "Select option (eg to exit: 99):${Rst}" sslSiteSelect
+
+                if [ -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}.conf && ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
+                then
+                    sudo ufw delete allow 'Apache'
+                    sudo ufw allow 'Apache Full'
+                    sudo certbot --apache -d www.${siteURL[$sslSiteSelect]} -d ${siteURL[$sslSiteSelect]}
+                    break
+                fi;;
+        [Nn]* ) continue;;
+        [99]  ) break;;
+        * ) echo "Answer only Yes(Yy), No(Nn) or 99(exit)";;
+    esac
+done
+
 echo "Point your domains A record to $IP and after DNS propagation everything should be working fine."
 echo "Sites added and configured are:${Rst}"
 temp=0
 while [ $temp != $numb ]
 do
-    echo -e "${Green}http://"${siteURL[$a]}
+    echo -e "http://"${siteURL[$a]}
     temp=`expr $temp + 1`
 done
-#TODO(pavank): add SSL certificate setup if required
