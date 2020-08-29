@@ -52,6 +52,7 @@ if sudo ufw status | grep -q inactive$; then
         read -p "Do you want to enable (Yy/Nn)? " yn
         case $yn in
             [Yy]* ) sudo ufw enable;
+                    echo "UFW enabled. Allowing SSH & Apache"
                     sudo ufw allow ssh;
                     sudo ufw allow Apache;
                     break;;
@@ -60,7 +61,7 @@ if sudo ufw status | grep -q inactive$; then
         esac
     done
 else
-    echo -e "${Green}UFW is enabled"
+    echo "UFW enabled"
 fi
 
 #TODO(pavank): try to check if site is available at ${IP}
@@ -84,8 +85,8 @@ do
     #create fake page for temporary viewing
     sudo echo "<h1>Server "`expr $temp + 1`" setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" > /var/www/$siteNameNoTLD/index.html
 
-    echo -e "${Green}Site ${siteURL[$temp]} created, configuring${Rst}"
-    read -p "Email (to receive notifications for ${siteURL[$temp]}, leave blank if not required):" siteEmail
+    echo "Site ${siteURL[$temp]} created, configuring"
+    read -p "Email (leave blank if not required):" siteEmail
     if [ -z $siteEmail ]; then
         siteEmail=dev@localhost
     fi
@@ -99,15 +100,12 @@ done
 echo "Disabling default site (/var/www/html)"
 sudo a2dissite 000-default.conf
 
-echo "Restarting Apache2 to activate new configuration"
-sudo systemctl restart apache2
-
 while true
 do
     read -p "Do you also want to install SSL/TSL certificate (Yy/Nn)?" sslReq
     case $sslReq in
         [Yy]* ) sudo add-apt-repository ppa:certbot/certbot
-                sudo apt install python-certbot-apache
+                sudo apt install python-certbot-apache -y
                 
                 temp=0
                 while [ $temp != $numb ]
@@ -119,8 +117,8 @@ do
                     temp=`expr $temp + 1`
                 done
                 
-                echo "99 ) Exit"
-                read -p "Select option (eg to exit: 99):${Rst}" sslSiteSelect
+                echo "99) Exit${Rst}"
+                read -p "Select site to apply SSL (eg to exit: 99):" sslSiteSelect
 
                 if [ $sslSiteSelect == 99 ]
                 then
@@ -139,9 +137,12 @@ do
     esac
 done
 
+echo "Restarting Apache2 to activate new configuration"
+sudo systemctl restart apache2
+
 echo -e "${Bold}${Green}Success! Your sites have been added successfully.${Rst}"
 echo "Point your domains A record to $IP and after DNS propagation everything should be working fine."
-echo "Sites added and configured are:${Rst}"
+echo "Sites added and configured are:"
 
 temp=0
 while [ $temp != $numb ]
