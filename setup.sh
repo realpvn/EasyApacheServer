@@ -102,9 +102,6 @@ sudo a2dissite 000-default.conf
 echo "Restarting Apache2 to activate new configuration"
 sudo systemctl restart apache2
 
-echo -e "${Bold}${Green}Success! Your sites have been added successfully.${Rst}"
-#TODO(pavank): add SSL certificate setup if required
-
 while true
 do
     read -p "Do you also want to install SSL/TSL certificate (Yy/Nn)?" sslReq
@@ -142,11 +139,19 @@ do
     esac
 done
 
+echo -e "${Bold}${Green}Success! Your sites have been added successfully.${Rst}"
 echo "Point your domains A record to $IP and after DNS propagation everything should be working fine."
 echo "Sites added and configured are:${Rst}"
+
 temp=0
 while [ $temp != $numb ]
 do
-    echo -e "http://"${siteURL[$a]}
+    if [ -e /etc/apache2/sites-enabled/${siteURL[$temp]}-le-ssl.conf ]
+    then
+        echo "https://${siteURL[$temp]}"
+        temp=`expr $temp + 1`
+        continue
+    fi
+    echo "http://"${siteURL[$temp]}
     temp=`expr $temp + 1`
 done
