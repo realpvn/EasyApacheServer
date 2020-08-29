@@ -125,7 +125,7 @@ do
                     break
                 fi
 
-                if [ -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}.conf && ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
+                if [ -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}.conf ] && [ ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
                 then
                     sudo ufw delete allow 'Apache'
                     sudo ufw allow 'Apache Full'
