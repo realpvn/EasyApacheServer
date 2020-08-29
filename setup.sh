@@ -125,6 +125,11 @@ do
                 echo "99 ) Exit"
                 read -p "Select option (eg to exit: 99):${Rst}" sslSiteSelect
 
+                if [ $sslSiteSelect == 99 ]
+                then
+                    break
+                fi
+
                 if [ -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}.conf && ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
                 then
                     sudo ufw delete allow 'Apache'
@@ -132,9 +137,8 @@ do
                     sudo certbot --apache -d www.${siteURL[$sslSiteSelect]} -d ${siteURL[$sslSiteSelect]}
                     break
                 fi;;
-        [Nn]* ) continue;;
-        [99]  ) break;;
-        * ) echo "Answer only Yes(Yy), No(Nn) or 99(exit)";;
+        [Nn]* ) break;;
+        * ) echo "Answer only Yes(Yy) or No(Nn)";;
     esac
 done
 
