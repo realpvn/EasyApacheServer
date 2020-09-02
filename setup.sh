@@ -1,4 +1,4 @@
-# Colors from - https://github.com/ItsJimi/rainbow.sh
+# Colors from - https://gist.github.com/5682077.git
 TC='\e['
 
 CLR_LINE_START="${TC}1K"
@@ -34,6 +34,9 @@ echo "Apache Server Setup"
 echo "Updating Server"
 sudo apt update && sudo apt upgrade -y
 echo "Server updated"
+
+echo "Cleaning after upgrade"
+sudo apt autoremove && sudo apt autoclean
 
 IP=`curl -s icanhazip.com`
 echo -e "Server Public IP: ${Purple}"${IP}${Rst}
@@ -100,42 +103,64 @@ done
 echo "Disabling default site (/var/www/html)"
 sudo a2dissite 000-default.conf
 
-while true
-do
-    read -p "Do you also want to install SSL/TSL certificate (Yy/Nn)?" sslReq
-    case $sslReq in
-        [Yy]* ) sudo add-apt-repository ppa:certbot/certbot
-                sudo apt install python-certbot-apache -y
-                
-                temp=0
-                while [ $temp != $numb ]
+read -p "Do you also want to install SSL/TSL certificate (Yy/Nn)?" sslReq
+case $sslReq in
+    [Yy]* ) sudo add-apt-repository ppa:certbot/certbot
+            sudo apt install python-certbot-apache -y
+            
+            while true
+            do
+                siteCount=0
+                for filePath in /etc/apache2/sites-enabled/*
                 do
-                    if [ ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
+                    # how below 'cut' command works
+                    # $filePath will have /etc/apache2/sites-enabled/example.com.conf
+                    # first cut will seperate $filePath by '/' and we take everything after field 5 (-f5-) i.e example.com.conf
+                    # then we cut example.com.conf by '.' and take everything upto field 2 (-f-2) i.e example.com
+                    siteName=$filePath | cut -d'/' -f5- | cut -d'.' -f-2
+                    if [ -e /etc/apache2/sites-enabled/${siteName}.conf ] && [ ! -e /etc/apache2/sites-enabled/${siteName}-le-ssl.conf ]
                     then
-                        echo -e "${Purple}`expr $temp + 1`) ${siteURL[$a]}"
+                        siteNameArr[siteCount]=siteName
+                        siteCount=`expr $siteCount + 1`
+                        echo ${siteCount}". "$siteName
                     fi
-                    temp=`expr $temp + 1`
                 done
                 
-                echo -e "99) Exit${Rst}"
-                read -p "Select site to apply SSL (eg to exit: 99):" sslSiteSelect
+                if [ ! $siteCount > 0 ]
+                then
+                    echo "${Red}SSL Installation exiting. You do not have sites without SSL or it was not found by the script"
+                    echo "Please check if your apache server was setup properly and run SSL Installation again${Rst}"
+                    break
+                fi
+
+                echo -e "99. Exit${Rst}"
+                read -p "Select site to apply SSL (eg, to exit: 99):" sslSiteSelect
 
                 if [ $sslSiteSelect == 99 ]
                 then
                     break
                 fi
 
-                if [ -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}.conf ] && [ ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
+                #because index starts from 0, but user inputs 1 for 0 hence we subtract 1 by user input
+                sslSiteSelect -= 1
+                if [ -e /etc/apache2/sites-enabled/${siteNameArr[$sslSiteSelect]}.conf ] && [ ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
                 then
+                    echo "Allowing 'Apache Full' in ufw"
                     sudo ufw delete allow 'Apache'
                     sudo ufw allow 'Apache Full'
                     sudo certbot --apache -d www.${siteURL[$sslSiteSelect]} -d ${siteURL[$sslSiteSelect]}
-                    break
-                fi;;
-        [Nn]* ) break;;
-        * ) echo "Answer only Yes(Yy) or No(Nn)";;
-    esac
-done
+                    if [ -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
+                    then
+                        echo -e "${Bold}${Green}SSL Successful for ${siteURL[$sslSiteSelect]}${Rst}"
+                        break
+                    fi
+                    echo -e "${Bold}${Red}SSL unSuccessful for ${siteURL[$sslSiteSelect]}${Rst}"
+                fi
+                echo -e "${Bold}${Green}SSL already installed for ${siteURL[$sslSiteSelect]}${Rst}"
+            done;;
+    [Nn]* ) echo "SSL installation rejected by user";;
+    * ) echo "Invalid. Rerun the script to add SSL";;
+esac
 
 echo "Restarting Apache2 to activate new configuration"
 sudo systemctl restart apache2
