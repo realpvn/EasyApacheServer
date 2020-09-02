@@ -36,7 +36,7 @@ sudo apt update && sudo apt upgrade -y
 echo "Server updated"
 
 echo "Cleaning after upgrade"
-sudo apt autoremove && sudo apt autoclean
+sudo apt autoremove -y && sudo apt autoclean -y
 
 IP=`curl -s icanhazip.com`
 echo -e "Server Public IP: ${Purple}"${IP}${Rst}
@@ -111,14 +111,15 @@ case $sslReq in
             while true
             do
                 siteCount=0
-                for filePath in /etc/apache2/sites-enabled/*
+                siteNameArr=""
+                for filePath in /etc/apache2/sites-available/*
                 do
                     # how below 'cut' command works
-                    # $filePath will have /etc/apache2/sites-enabled/example.com.conf
+                    # $filePath will have /etc/apache2/sites-available/example.com.conf
                     # first cut will seperate $filePath by '/' and we take everything after field 5 (-f5-) i.e example.com.conf
                     # then we cut example.com.conf by '.' and take everything upto field 2 (-f-2) i.e example.com
                     siteName=$filePath | cut -d'/' -f5- | cut -d'.' -f-2
-                    if [ -e /etc/apache2/sites-enabled/${siteName}.conf ] && [ ! -e /etc/apache2/sites-enabled/${siteName}-le-ssl.conf ]
+                    if [ -e /etc/apache2/sites-available/${siteName}.conf ] && [ ! -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
                     then
                         siteNameArr[siteCount]=siteName
                         siteCount=`expr $siteCount + 1`
@@ -135,7 +136,7 @@ case $sslReq in
 
                 echo -e "99. Exit${Rst}"
                 read -p "Select site to apply SSL (eg, to exit: 99):" sslSiteSelect
-
+                echo "count= ${siteCount}"
                 if [ $sslSiteSelect == 99 ]
                 then
                     break
@@ -143,13 +144,13 @@ case $sslReq in
 
                 #because index starts from 0, but user inputs 1 for 0 hence we subtract 1 by user input
                 sslSiteSelect -= 1
-                if [ -e /etc/apache2/sites-enabled/${siteNameArr[$sslSiteSelect]}.conf ] && [ ! -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
+                if [ -e /etc/apache2/sites-available/${siteNameArr[$sslSiteSelect]}.conf ] && [ ! -e /etc/apache2/sites-available/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
                 then
                     echo "Allowing 'Apache Full' in ufw"
                     sudo ufw delete allow 'Apache'
                     sudo ufw allow 'Apache Full'
                     sudo certbot --apache -d www.${siteURL[$sslSiteSelect]} -d ${siteURL[$sslSiteSelect]}
-                    if [ -e /etc/apache2/sites-enabled/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
+                    if [ -e /etc/apache2/sites-available/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
                     then
                         echo -e "${Bold}${Green}SSL Successful for ${siteURL[$sslSiteSelect]}${Rst}"
                         break
@@ -172,7 +173,7 @@ echo "Sites added and configured are:"
 temp=0
 while [ $temp != $numb ]
 do
-    if [ -e /etc/apache2/sites-enabled/${siteURL[$temp]}-le-ssl.conf ]
+    if [ -e /etc/apache2/sites-available/${siteURL[$temp]}-le-ssl.conf ]
     then
         echo "https://${siteURL[$temp]}"
         temp=`expr $temp + 1`
