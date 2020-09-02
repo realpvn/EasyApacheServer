@@ -119,9 +119,10 @@ case $sslReq in
                     # first cut will seperate $filePath by '/' and we take everything after field 5 (-f5-) i.e example.com.conf
                     # then we cut example.com.conf by '.' and take everything upto field 2 (-f-2) i.e example.com
                     siteName=$filePath | cut -d'/' -f5- | cut -d'.' -f-2
+                    echo $siteName
                     if [ -e /etc/apache2/sites-available/${siteName}.conf ] && [ ! -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
                     then
-                        siteNameArr[siteCount]=siteName
+                        siteNameArr[$siteCount]=$siteName
                         siteCount=`expr $siteCount + 1`
                         echo ${siteCount}". "$siteName
                     fi
