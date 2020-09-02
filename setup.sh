@@ -118,13 +118,12 @@ case $sslReq in
                     # $filePath will have /etc/apache2/sites-available/example.com.conf
                     # first cut will seperate $filePath by '/' and we take everything after field 5 (-f5-) i.e example.com.conf
                     # then we cut example.com.conf by '.' and take everything upto field 2 (-f-2) i.e example.com
-                    siteName=$filePath | cut -d'/' -f5- | cut -d'.' -f-2
-                    echo $siteName
+                    siteName=`echo $filePath | cut -d'/' -f5- | cut -d'.' -f-2`
                     if [ -e /etc/apache2/sites-available/${siteName}.conf ] && [ ! -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
                     then
                         siteNameArr[$siteCount]=$siteName
                         siteCount=`expr $siteCount + 1`
-                        echo ${siteCount}". "$siteName
+                        echo ${Purple}${siteCount}". "$siteName ${Rst}
                     fi
                 done
                 
@@ -135,7 +134,7 @@ case $sslReq in
                     break
                 fi
 
-                echo -e "99. Exit${Rst}"
+                echo -e "${Purple}99. Exit${Rst}"
                 echo "count= ${siteCount}"
                 read -p "Select site to apply SSL (eg, to exit: 99):" sslSiteSelect
                 if [ $sslSiteSelect == 99 ]
@@ -144,7 +143,7 @@ case $sslReq in
                 fi
 
                 #because index starts from 0, but user inputs 1 for 0 hence we subtract 1 by user input
-                sslSiteSelect -= 1
+                sslSiteSelect=`expr $sslSiteSelect-1`
                 if [ -e /etc/apache2/sites-available/${siteNameArr[$sslSiteSelect]}.conf ] && [ ! -e /etc/apache2/sites-available/${siteURL[$sslSiteSelect]}-le-ssl.conf ]
                 then
                     echo "Allowing 'Apache Full' in ufw"
