@@ -156,6 +156,7 @@ case $sslReq in
                         break
                     fi
                     echo -e "${Bold}${Red}SSL unSuccessful for ${siteURL[$sslSiteSelect]}${Rst}"
+                    break
                 fi
                 echo -e "${Bold}${Green}SSL already installed for ${siteURL[$sslSiteSelect]}${Rst}"
             done;;
