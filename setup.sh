@@ -135,7 +135,6 @@ case $sslReq in
                 fi
 
                 echo -e "${Purple}99. Exit${Rst}"
-                echo "count= ${siteCount}"
                 read -p "Select site to apply SSL (eg, to exit: 99):" sslSiteSelect
                 if [ $sslSiteSelect == 99 ]
                 then
