@@ -123,7 +123,7 @@ case $sslReq in
                     then
                         siteNameArr[$siteCount]=$siteName
                         siteCount=`expr $siteCount + 1`
-                        echo ${Purple}${siteCount}". "$siteName ${Rst}
+                        echo -e ${Purple}${siteCount}". "$siteName ${Rst}
                     fi
                 done
                 
