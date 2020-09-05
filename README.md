@@ -19,16 +19,25 @@ sudo chmod +x setup.sh
 Running the script
 ```
 Usage: easyapache [options]
+<<<<<<< HEAD
 Options:
 -f:   Full setup, default option if none is provided
 -a:   Adding new site (includes apache install)
 -s:   Install SSL certificate for sites available
 -h:   Help (shows all commands)"
+=======
+-f:   (default) Full setup, default option if none is provided
+-a:   Adding new site (includes apache install)
+-s:   Install SSL certificate for sites available"
+>>>>>>> Update README.md
 
 Example
 ./easyapache -f   #for full installation i.e Apache & SSL certificate
 ./easyapache -as  #for installating Apache server & SSL certificate
+<<<<<<< HEAD
 ./easyapache -h   #for help
+=======
+>>>>>>> Update README.md
 ```
 
 
