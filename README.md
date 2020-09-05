@@ -12,13 +12,20 @@ git clone https://github.com/realpvn/EasyApacheServer.git
 Change directory to `EasyApacheServer` and give execute permission for `setup.sh`  
 ```
 cd EasyApacheServer
-sudo chmod +x setup.sh
+sudo chmod +x easyapache
 ```
 
 #### Step 3
-Run the script and follow along  
+Running the script
 ```
-./setup.sh
+Usage: easyapache [options]
+-f:   (default) Full setup, default option if none is provided
+-a:   Adding new site (includes apache install)
+-s:   Install SSL certificate for sites available"
+
+Example
+./easyapache -f   #for full installation i.e Apache & SSL certificate
+./easyapache -as  #for installating Apache server & SSL certificate
 ```
 
 
