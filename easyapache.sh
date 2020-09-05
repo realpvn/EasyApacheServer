@@ -31,8 +31,6 @@ White="${TC}37m";  IWhite="${TC}97m";  OnWhite="${TC}47m";  OnIWhite="${TC}107m"
 # -a (add-site) : Adding new site (includes apache install)
 # -s (ssl) : Install SSL certificate
 #***********************************************
-echo "Apache Server Setup"
-
 echo "Updating Server"
 sudo apt update && sudo apt upgrade -y
 echo "Server updated"

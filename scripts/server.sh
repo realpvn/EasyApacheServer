@@ -2,7 +2,7 @@ echo -e "${Bold}${Green}Installing Apache"
 allSitesURL=""
 allSitesCount=-1
 
-dpkg -s $1 &> /dev/null
+dpkg -s apache2 &> /dev/null
 if [ $? -eq 1 ]; then
     echo "Installing Apache 2"
     sudo apt install apache2 -y

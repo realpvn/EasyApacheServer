@@ -1,13 +1,17 @@
 echo -e "${Bold}${Green}Installing SSL"
-sudo add-apt-repository ppa:certbot/certbot
-sudo apt install python-certbot-apache -y
-
 allSitesURL=""
 allSitesCount=-1
 
+dpkg -s certbot &> /dev/null
+if [ $? -eq 1 ]; then
+    echo "Installing Certbot"
+    sudo add-apt-repository ppa:certbot/certbot
+    sudo apt install python-certbot-apache -y
+fi
+
 while true
 do
-    for filePath in /etc/apache2/sites-available/*
+    for filePath in /etc/apache2/sites-available/*.conf
     do
         # how below 'cut' command works
         # $filePath will have /etc/apache2/sites-available/example.com.conf
