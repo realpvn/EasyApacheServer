@@ -12,21 +12,30 @@ fi
 while true
 do
     read -p "URL (do not add www, eg input - helloworld.com): " siteName
-    if [ -e /etc/apache2/sites-available/${siteName}.conf ] && [ ! -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
+    if [ ! -e /etc/apache2/sites-available/${siteName}.conf ]
     then
-        allSitesCount=`expr $allSitesCount + 1`
-        allSitesURL[$allSitesCount]=$siteName
-        echo -e ${Purple}`expr $allSitesCount + 1`". "$siteName ${Rst}
-        
-        sudo certbot --apache -d www.$siteName -d $siteName
-        if [ -e /etc/apache2/sites-available/$siteName-le-ssl.conf ]
-        then
-            echo -e "${Bold}${Green}SSL Successful for $siteName${Rst}"
-            break
-        fi
-        echo -e "${Bold}${Red}SSL unsuccessful for $siteName${Rst}"
+        echo "${siteName} does not exist. Add it using './easyapache -a'"
+        exit
+    fi
+
+    if [ -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
+    then
+        echo "${siteName} already has SSL installed"
+        continue
+    fi
+
+    allSitesCount=`expr $allSitesCount + 1`
+    allSitesURL[$allSitesCount]=$siteName
+    echo -e ${Purple}`expr $allSitesCount + 1`". "$siteName ${Rst}
+    
+    sudo certbot --apache -d www.$siteName -d $siteName
+    if [ -e /etc/apache2/sites-available/$siteName-le-ssl.conf ]
+    then
+        echo -e "${Bold}${Green}SSL Successful for $siteName${Rst}"
         break
     fi
+    echo -e "${Bold}${Red}SSL unsuccessful for $siteName${Rst}"
+    break
 done
 
 if [ $allSitesCount == -1 ]
