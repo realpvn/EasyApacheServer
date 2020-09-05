@@ -16,7 +16,7 @@ do
 
     if [ -e /etc/apache2/sites-available/$siteURL.conf ]
     then
-        echo -e "${Red}$siteURL already exists, do you want to overwrite (Yy/Nn/99 to server setup)?${Rst}"
+        echo -e "${Red}$siteURL already exists, do you want to overwrite (Yy/Nn/99 to exit setup)?${Rst}"
         read overwriteSite
         case $overwriteSite in
             [Yy]* ) #allSitesURL used for printing at last
