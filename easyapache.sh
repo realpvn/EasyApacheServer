@@ -43,7 +43,7 @@ sudo apt autoremove -y && sudo apt autoclean -y
 IP=`curl -s icanhazip.com`
 echo -e "Server Public IP: ${Purple}"${IP}${Rst}
 
-$scriptDir="./scripts"
+scriptDir="./scripts"
 chmod +x $scriptDir/server.sh
 chmod +x $scriptDir/ssl.sh
 
