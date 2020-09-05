@@ -11,16 +11,24 @@ fi
 
 while true
 do
+    echo "99 to exit"
     read -p "URL (do not add www, eg input - helloworld.com): " siteName
+
+    if [ $siteName == 99 ]
+    then
+        echo "Good byee..."
+        break
+    fi
+
     if [ ! -e /etc/apache2/sites-available/${siteName}.conf ]
     then
-        echo "${siteName} does not exist. Add it using './easyapache -a'"
-        exit
+        echo "${siteName} does not exist.\n${Purple}Add it using './easyapache -a'${Rst}"
+        continue
     fi
 
     if [ -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
     then
-        echo "${siteName} already has SSL installed"
+        echo "${Bold}${Green}${siteName} already has SSL installed${Rst}"
         continue
     fi
 
@@ -32,10 +40,10 @@ do
     if [ -e /etc/apache2/sites-available/$siteName-le-ssl.conf ]
     then
         echo -e "${Bold}${Green}SSL Successful for $siteName${Rst}"
-        break
+        continue
     fi
-    echo -e "${Bold}${Red}SSL unsuccessful for $siteName${Rst}"
-    break
+    echo -e "${Bold}${Red}SSL unsuccessful for $siteName${Rst}, try again"
+    exit
 done
 
 if [ $allSitesCount == -1 ]
