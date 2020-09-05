@@ -19,6 +19,7 @@ sudo chmod +x easyapache
 Running the script
 ```
 Usage: easyapache [options]
+Options:
 -f:   (default) Full setup, default option if none is provided
 -a:   Adding new site (includes apache install)
 -s:   Install SSL certificate for sites available"
