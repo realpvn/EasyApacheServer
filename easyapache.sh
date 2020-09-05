@@ -53,7 +53,8 @@ while getopts 'fas' flag; do
 	s ) ./scripts/ssl.sh
 		exit;;
     * ) echo -e "${Green}Usage: easy-apache [options]\n-f:\t(default) Full setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available${Rst}"
-       exit;;
+       	echo -e "Example\n./easyapache -f   #for full installation i.e Apache & SSL certificate\n./easyapache -as  #for installating Apache server & SSL certificate"
+		exit;;
   esac
 done
 echo -e "${Green}Usage: easy-apache [options]\n-f:\t(default) Full setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available${Rst}"
