@@ -25,3 +25,5 @@ Run the script and follow along
 ## Works on
 - Ubuntu servers  
 (will update more once I test)
+
+Give it a ⭐ if it helped you xD
