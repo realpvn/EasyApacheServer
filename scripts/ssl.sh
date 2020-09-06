@@ -1,4 +1,5 @@
-echo -e "${Bold}${Green}Installing SSL"
+source rainbow.sh
+echo -e "${Bold}${Green}Installing SSL${Rst}"
 allSitesURL=""
 allSitesCount=-1
 
@@ -17,6 +18,10 @@ do
     if [ $siteName == 99 ]
     then
         echo "Good byee..."
+        if [ allSitesCount == -1 ]
+        then
+            exit
+        fi
         break
     fi
 

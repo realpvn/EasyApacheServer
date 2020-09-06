@@ -1,4 +1,5 @@
-echo -e "${Bold}${Green}Installing Apache"
+source rainbow.sh
+echo -e "${Bold}${Green}Installing Apache${Rst}"
 allSitesURL=""
 allSitesCount=-1
 
