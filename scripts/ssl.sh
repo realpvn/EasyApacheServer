@@ -27,7 +27,7 @@ do
 
     if [ ! -e /etc/apache2/sites-available/${siteName}.conf ]
     then
-        echo -e "${siteName} does not exist.\n${Purple}Add it using './easyapache -a'${Rst}"
+        echo -e "${siteName} does not exist.\n${Purple}Add it using './easy-apache -a'${Rst}"
         continue
     fi
 

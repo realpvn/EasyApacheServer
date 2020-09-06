@@ -42,7 +42,7 @@ do
                     sudo chmod -R 755 /var/www
 
                     #create temporary index.html page for viewing
-                    sudo echo "<h1>Server setup by <a href='https://github.com/realpvn/EasyApacheServer.git'>EasyApacheSetup</a> (https://github.com/realpvn/EasyApacheServer.git) </h1>" > /var/www/$siteNameNoTLD/index.html
+                    sudo echo "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" > /var/www/$siteNameNoTLD/index.html
 
                     echo "Site $siteURL created, configuring"
                     read -p "Email (leave blank if not required):" siteEmail
@@ -64,7 +64,7 @@ done
 
 if [ $allSitesCount == -1 ]
 then
-    echo "${Red}Exiting EasyApache. No Sites were added${Rst}"
+    echo "${Red}Exiting easy-apache. No Sites were added${Rst}"
     exit
 fi
 
