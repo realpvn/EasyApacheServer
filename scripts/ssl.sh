@@ -18,7 +18,7 @@ do
     if [ $siteName == 99 ]
     then
         echo "Good byee..."
-        if [ allSitesCount == -1 ]
+        if [ $allSitesCount == -1 ]
         then
             exit
         fi
@@ -27,13 +27,13 @@ do
 
     if [ ! -e /etc/apache2/sites-available/${siteName}.conf ]
     then
-        echo "${siteName} does not exist.\n${Purple}Add it using './easyapache -a'${Rst}"
+        echo -e "${siteName} does not exist.\n${Purple}Add it using './easyapache -a'${Rst}"
         continue
     fi
 
     if [ -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
     then
-        echo "${Bold}${Green}${siteName} already has SSL installed${Rst}"
+        echo -e "${Bold}${Green}${siteName} already has SSL installed${Rst}"
         continue
     fi
 
@@ -56,7 +56,7 @@ then
     echo -e "${Red}SSL Installation exiting because one of the following were true"
     echo "1. You had no sites added (try running 'easy-apache -a' to add site"
     echo "2. You already have ssl certificates installed"
-    echo "Please check & run SSL Installation again${Rst}"
+    echo -e "Please check & run SSL Installation again${Rst}"
     exit
 fi
 
