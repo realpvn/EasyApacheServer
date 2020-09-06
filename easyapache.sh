@@ -1,15 +1,5 @@
 source rainbow.sh
 
-echo "Updating Server"
-sudo apt update && sudo apt upgrade -y
-echo "Server updated"
-
-echo "Cleaning after upgrade"
-sudo apt autoremove -y && sudo apt autoclean -y
-
-IP=`curl -s icanhazip.com`
-echo -e "Server Public IP: ${Purple}"${IP}${Rst}
-
 scriptDir="./scripts"
 chmod +x $scriptDir/server.sh
 chmod +x $scriptDir/ssl.sh

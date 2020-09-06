@@ -3,6 +3,16 @@ echo -e "${Bold}${Green}Installing Apache${Rst}"
 allSitesURL=""
 allSitesCount=-1
 
+echo "Updating Server"
+sudo apt update && sudo apt upgrade -y
+echo "Server updated"
+
+echo "Cleaning after upgrade"
+sudo apt autoremove -y && sudo apt autoclean -y
+
+IP=`curl -s icanhazip.com`
+echo -e "Server Public IP: ${Purple}"${IP}${Rst}
+
 dpkg -s apache2 &> /dev/null
 if [ $? -eq 1 ]; then
     echo "Installing Apache 2"
