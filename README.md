@@ -23,7 +23,7 @@ Options:
 -f:   Full setup, default option if none is provided
 -a:   Adding new site (includes apache install)
 -s:   Install SSL certificate for sites available
--h:   Help (shows all commands)"
+-h:   Help (shows all commands)
 
 Example
 ./easy-apache -f   #for full installation i.e Apache & SSL certificate
