@@ -16,9 +16,19 @@ sudo chmod +x setup.sh
 ```
 
 #### Step 3
-Run the script and follow along  
+Running the script
 ```
-./setup.sh
+Usage: easy-apache [options]
+Options:
+-f:   Full setup, default option if none is provided
+-a:   Adding new site (includes apache install)
+-s:   Install SSL certificate for sites available
+-h:   Help (shows all commands)"
+
+Example
+./easy-apache -f   #for full installation i.e Apache & SSL certificate
+./easy-apache -as  #for installating Apache server & SSL certificate
+./easy-apache -h   #for help
 ```
 
 
