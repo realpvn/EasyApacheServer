@@ -18,7 +18,7 @@ sudo chmod +x setup.sh
 #### Step 3
 Running the script
 ```
-Usage: easyapache [options]
+Usage: easy-apache [options]
 Options:
 -f:   Full setup, default option if none is provided
 -a:   Adding new site (includes apache install)
@@ -26,9 +26,9 @@ Options:
 -h:   Help (shows all commands)"
 
 Example
-./easyapache -f   #for full installation i.e Apache & SSL certificate
-./easyapache -as  #for installating Apache server & SSL certificate
-./easyapache -h   #for help
+./easy-apache -f   #for full installation i.e Apache & SSL certificate
+./easy-apache -as  #for installating Apache server & SSL certificate
+./easy-apache -h   #for help
 ```
 
 
