@@ -92,9 +92,9 @@ echo -e "${Bold}${Green}Success! Your site(s) have been added successfully"
 echo -e "Point your domains A record to $IP and after DNS propagation everything should be working fine.${Rst}"
 echo "Sites added and configured are:"
 
-temp=0
+temp=-1
 while [ $temp != $allSitesCount ]
 do
-    echo "http://"${allSitesURL[$temp]}
     temp=`expr $temp + 1`
+    echo "http://"${allSitesURL[$temp]}
 done

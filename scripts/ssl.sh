@@ -65,15 +65,15 @@ sudo ufw delete allow 'Apache'
 sudo ufw allow 'Apache Full'
 
 echo "SSL added to sites:"
-temp=0
+temp=-1
 while [ $temp != $allSitesCount ]
 do
     if [ -e /etc/apache2/sites-available/${allSitesURL[$temp]}-le-ssl.conf ]
     then
-        echo "https://${allSitesURL[$temp]}"
         temp=`expr $temp + 1`
+        echo "https://${allSitesURL[$temp]}"
         continue
     fi
-    echo "http://"${allSitesURL[$temp]}
     temp=`expr $temp + 1`
+    echo "http://"${allSitesURL[$temp]}
 done
