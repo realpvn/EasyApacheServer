@@ -22,7 +22,7 @@ do
         case $overwriteSite in
             [Yy]* ) #allSitesURL used for printing at last
                     allSitesCount=`expr $allSitesCount + 1`
-                    allSitesURL[$allSitesCount]=$overwriteSite
+                    allSitesURL[$allSitesCount]=$siteURL
                     
                     #used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
                     siteNameNoTLD=`echo $siteURL | cut -d'.' -f1`
