@@ -95,6 +95,12 @@ echo "Sites added and configured are:"
 temp=-1
 while [ $temp != $allSitesCount ]
 do
+    if [ -e /etc/apache2/sites-available/${allSitesURL[$temp]}-le-ssl.conf ]
+    then
+        temp=`expr $temp + 1`
+        echo "https://${allSitesURL[$temp]}"
+        continue
+    fi
     temp=`expr $temp + 1`
     echo "http://"${allSitesURL[$temp]}
 done
