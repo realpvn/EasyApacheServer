@@ -50,12 +50,13 @@ apacheInstall () {
 	IP=`curl -s icanhazip.com`
 	echo "Server Public IP: ${Purple}"${IP}${Rst}
 
-	dpkg -s apache2 &> /dev/null
-	if [ $? -eq 1 ]; then
+	#package search not working, disabled for now
+	#dpkg -s apache2 &> /dev/null
+	#if [ $? -eq 1 ]; then
 		echo "Installing Apache 2"
 		sudo apt install apache2 -y
 		echo ${Purple}Apache `apache2 -v`"${Rst}"
-	fi
+	#fi
 
 	while true
 	do
@@ -67,35 +68,15 @@ apacheInstall () {
 			echo "${Red}$siteURL already exists, do you want to overwrite (Yy/Nn/99 to exit setup)?${Rst}"
 			read overwriteSite
 			case $overwriteSite in
-				[Yy]* ) #allSitesURL used for printing at last
-						allSitesCount=`expr $allSitesCount + 1`
-						allSitesURL[$allSitesCount]=$siteURL
-						
-						#used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
-						siteNameNoTLD=`echo $siteURL | cut -d'.' -f1`
-
-						sudo mkdir -p /var/www/$siteNameNoTLD
-						sudo chown -R $USER:$USER /var/www/$siteNameNoTLD
-						sudo chmod -R 755 /var/www
-
-						#create temporary index.html page for viewing
-						sudo echo "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" > /var/www/$siteNameNoTLD/index.html
-
-						echo "Site $siteURL created, configuring"
-						read -p "Email (leave blank if not required):" siteEmail
-						if [ -z $siteEmail ]; then
-							siteEmail=dev@localhost
-						fi
-						echo "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName $siteURL\n\tServerAlias www.$siteURL\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/$siteURL.conf
-
-						echo "Enabling site configuration"
-						sudo a2ensite $siteURL.conf
+				[Yy]* ) addSite $siteURL
 						break;;
 				[Nn]* ) continue;;
 				[99]*  ) break;;
 					* ) echo "${Red}Invalid input. Skipping $siteURL setup"
 						continue;;
 			esac
+		else
+			addSite $siteURL
 		fi
 	done
 
@@ -151,6 +132,34 @@ apacheInstall () {
 		temp=`expr $temp + 1`
 		echo "http://"${allSitesURL[$temp]}
 	done
+}
+
+
+addSite () {
+	siteURL=$1
+	#allSitesURL used for printing at last
+	allSitesCount=`expr $allSitesCount + 1`
+	allSitesURL[$allSitesCount]=$siteURL
+	
+	#used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
+	siteNameNoTLD=`echo $siteURL | cut -d'.' -f1`
+
+	sudo mkdir -p /var/www/$siteNameNoTLD
+	sudo chown -R $USER:$USER /var/www/$siteNameNoTLD
+	sudo chmod -R 755 /var/www
+
+	#create temporary index.html page for viewing
+	sudo echo "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" > /var/www/$siteNameNoTLD/index.html
+
+	echo "Site $siteURL created, configuring"
+	read -p "Email (leave blank if not required):" siteEmail
+	if [ -z $siteEmail ]; then
+		siteEmail=dev@localhost
+	fi
+	echo "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName $siteURL\n\tServerAlias www.$siteURL\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/$siteURL.conf
+
+	echo "Enabling site configuration"
+	sudo a2ensite $siteURL.conf
 }
 
 sslInstall () {
