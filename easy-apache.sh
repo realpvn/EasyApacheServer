@@ -1,5 +1,3 @@
-#!/bin/sh
-
 terminalColors () {
 	# Colors from - https://gist.github.com/5682077.git
 	TC='\e['
@@ -31,36 +29,35 @@ terminalColors () {
 }
 
 help () {
-	echo "${Bold}Usage:${Rst}\neasy-apache [options]\n\n${Bold}Options:${Rst}\n-f:\tFull setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available\n-h:\tHelp (shows available commands)${Rst}"
-	echo "\n${Bold}Example\n${Rst}./easy-apache -f\t#for full installation i.e Apache & SSL certificate\n./easy-apache -a\t#for installating Apache server\n./easy-apache -s\t#for installating SSL certificate"
+	echo -e "${Bold}Usage:${Rst}\neasy-apache [options]\n\n${Bold}Options:${Rst}\n-f:\tFull setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available\n-h:\tHelp (shows available commands)${Rst}"
+	echo -e "\n${Bold}Example\n${Rst}./easy-apache -f\t#for full installation i.e Apache & SSL certificate\n./easy-apache -a\t#for installating Apache server\n./easy-apache -s\t#for installating SSL certificate"
 }
 
 apacheInstall () {
-	echo "${Bold}${Green}Installing Apache${Rst}"
+	echo -e "${Bold}${Green}Installing Apache${Rst}"
+	allSitesURL=""
 	allSitesCount=-1
 
-	echo "Updating Server"
+	echo -e "Updating Server"
 	sudo apt update && sudo apt upgrade -y
-	echo "Server updated"
+	echo -e "Server updated"
 
-	echo "Cleaning after upgrade"
+	echo -e "Cleaning after upgrade"
 	sudo apt autoremove -y && sudo apt autoclean -y
 
 	IP=`curl -s icanhazip.com`
-	echo "Server Public IP: ${Purple}"${IP}${Rst}
+	echo -e "Server Public IP: ${Purple}"${IP}${Rst}
 
-	#package search not working, disabled for now
-	#dpkg -s apache2 &> /dev/null
-	#if [ $? -eq 1 ]; then
-		echo "Installing Apache 2"
+	dpkg -s apache2 &> /dev/null
+	if [ $? -eq 1 ]; then
+		echo -e "Installing Apache 2"
 		sudo apt install apache2 -y
-		echo ${Purple}Apache `apache2 -v`"${Rst}"
-	#fi
+		echo -e ${Purple}Apache `apache2 -v`"${Rst}"
+	fi
 
 	while true
 	do
-		echo "${Green}===>${Rst} Setting up new site"
-		echo "99 to exit"
+		echo -e "${Green}===>${Rst} Setting up new site"
 		read -p "URL (do not add www, eg input - helloworld.com): " siteURL
 
 		if [ $siteURL == 99 ]
@@ -75,15 +72,36 @@ apacheInstall () {
 
 		if [ -e /etc/apache2/sites-available/$siteURL.conf ]
 		then
-			echo "${Red}$siteURL already exists, do you want to overwrite (Yy/Nn/99 to exit setup)?${Rst}"
+			echo -e "${Red}$siteURL already exists, do you want to overwrite (Yy/Nn/99 to exit setup)?${Rst}"
 			read overwriteSite
 			case $overwriteSite in
-				[Yy]* ) allSitesCount=`expr $allSitesCount + 1`
-						addSite $siteURL
+				[Yy]* ) #allSitesURL used for printing at last
+						allSitesCount=`expr $allSitesCount + 1`
+						allSitesURL[$allSitesCount]=$siteURL
+						
+						#used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
+						siteNameNoTLD=`echo -e $siteURL | cut -d'.' -f1`
+
+						sudo mkdir -p /var/www/$siteNameNoTLD
+						sudo chown -R $USER:$USER /var/www/$siteNameNoTLD
+						sudo chmod -R 755 /var/www
+
+						#create temporary index.html page for viewing
+						sudo echo -e "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" > /var/www/$siteNameNoTLD/index.html
+
+						echo -e "Site $siteURL created, configuring"
+						read -p "Email (leave blank if not required):" siteEmail
+						if [ -z $siteEmail ]; then
+							siteEmail=dev@localhost
+						fi
+						echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName $siteURL\n\tServerAlias www.$siteURL\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/$siteURL.conf
+
+						echo -e "Enabling site configuration"
+						sudo a2ensite $siteURL.conf
 						break;;
 				[Nn]* ) continue;;
 				[99]*  ) break;;
-					* ) echo "${Red}Invalid input. Skipping $siteURL setup"
+					* ) echo -e "${Red}Invalid input. Skipping $siteURL setup"
 						continue;;
 			esac
 		else
@@ -94,87 +112,78 @@ apacheInstall () {
 
 	if [ $allSitesCount == -1 ]
 	then
-		echo "${Red}Exiting easy-apache. No Sites were added${Rst}"
+		echo -e "${Red}Exiting easy-apache. No Sites were added${Rst}"
 		exit
 	fi
 
-	echo "Checking UFW"
+	echo -e "Checking UFW"
 	if sudo ufw status | grep -q inactive$
 	then
-		echo "${Red}UFW is disabled. You need to enable it to continue...${Rst}"
+		echo -e "${Red}UFW is disabled. You need to enable it to continue...${Rst}"
 		
 		while true
 		do
 			read -p "Do you want to enable now (Yy/Nn)? " ufwEnable
 			case $ufwEnable in
 				[Yy]* ) sudo ufw enable;
-						echo "UFW enabled. Allowing SSH & Apache ports"
+						echo -e "UFW enabled. Allowing SSH & Apache ports"
 						sudo ufw allow ssh;
 						sudo ufw allow Apache;
 						break;;
-				[Nn]* ) echo "${Red}You cannot view the site until you enable ufw and allow SSH & Apache${Rst}"; break;;
-					* ) echo "Please answer yes(Yy) or no(Nn) ";;
+				[Nn]* ) echo -e "${Red}You cannot view the site until you enable ufw and allow SSH & Apache${Rst}"; break;;
+					* ) echo -e "Please answer yes(Yy) or no(Nn) ";;
 			esac
 		done
 	else
-		echo "UFW already enabled"
+		echo -e "UFW already enabled"
 	fi
 
-	echo "Disabling default site (/var/www/html)"
+	echo -e "Disabling default site (/var/www/html)"
 	sudo a2dissite 000-default.conf
 
-	echo "Restarting Apache2 to activate new configuration"
+	echo -e "Restarting Apache2 to activate new configuration"
 	sudo systemctl restart apache2
 
 	#TODO(pavank): try to check if site is available at server ${IP}
 
-	echo "${Bold}${Green}Success! Your site(s) have been added successfully"
-	echo "Point your domains A record to $IP and after DNS propagation everything should be working fine.${Rst}"
-}
+	echo -e "${Bold}${Green}Success! Your site(s) have been added successfully"
+	echo -e "Point your domains A record to $IP and after DNS propagation everything should be working fine.${Rst}"
+	echo -e "Sites added and configured are:"
 
-addSite () {
-	siteURL=$1
-	
-	#used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
-	siteNameNoTLD=`echo $siteURL | cut -d'.' -f1`
-
-	sudo mkdir -p /var/www/$siteNameNoTLD
-	sudo chown -R $USER:$USER /var/www/$siteNameNoTLD
-	sudo chmod -R 755 /var/www
-
-	#create temporary index.html page for viewing
-	sudo echo "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" > /var/www/$siteNameNoTLD/index.html
-
-	echo "Site $siteURL created, configuring"
-	read -p "Email (leave blank if not required):" siteEmail
-	if [ -z $siteEmail ]; then
-		siteEmail=dev@localhost
-	fi
-	echo "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName $siteURL\n\tServerAlias www.$siteURL\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/$siteURL.conf
-
-	echo "Enabling site configuration"
-	sudo a2ensite $siteURL.conf
+	temp=-1
+	while [ $temp != $allSitesCount ]
+	do
+		if [ -e /etc/apache2/sites-available/${allSitesURL[$temp]}-le-ssl.conf ]
+		then
+			temp=`expr $temp + 1`
+			echo -e "https://${allSitesURL[$temp]}"
+			continue
+		fi
+		temp=`expr $temp + 1`
+		echo -e "http://"${allSitesURL[$temp]}
+	done
 }
 
 sslInstall () {
-	echo "${Bold}${Green}Installing SSL${Rst}"
+	echo -e "${Bold}${Green}Installing SSL${Rst}"
+	allSitesURL=""
 	allSitesCount=-1
 
-	#dpkg -s certbot &> /dev/null
-	#if [ $? -eq 1 ]; then
-		echo "Installing Certbot"
+	dpkg -s certbot &> /dev/null
+	if [ $? -eq 1 ]; then
+		echo -e "Installing Certbot"
 		sudo add-apt-repository ppa:certbot/certbot
 		sudo apt install python-certbot-apache -y
 	#fi
 
 	while true
 	do
-		echo "99 to exit"
+		echo -e "99 to exit"
 		read -p "URL (do not add www, eg input - helloworld.com): " siteName
 
 		if [ $siteName == 99 ]
 		then
-			echo "Good byee..."
+			echo -e "Good byee..."
 			if [ $allSitesCount == -1 ]
 			then
 				exit
@@ -184,47 +193,62 @@ sslInstall () {
 
 		if [ ! -e /etc/apache2/sites-available/${siteName}.conf ]
 		then
-			echo "${siteName} does not exist.\n${Purple}Add it using './easy-apache -a'${Rst}"
+			echo -e "${siteName} does not exist.\n${Purple}Add it using './easy-apache -a'${Rst}"
 			continue
 		fi
 
 		if [ -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
 		then
-			echo "${Bold}${Green}${siteName} already has SSL installed${Rst}"
+			echo -e "${Bold}${Green}${siteName} already has SSL installed${Rst}"
 			continue
 		fi
 
 		allSitesCount=`expr $allSitesCount + 1`
-		echo ${Purple}`expr $allSitesCount + 1`". "$siteName ${Rst}
+		allSitesURL[$allSitesCount]=$siteName
+		echo -e ${Purple}`expr $allSitesCount + 1`". "$siteName ${Rst}
 		
 		sudo certbot --apache -d www.$siteName -d $siteName
 		if [ -e /etc/apache2/sites-available/$siteName-le-ssl.conf ]
 		then
-			echo "${Bold}${Green}SSL Successful for $siteName${Rst}"
+			echo -e "${Bold}${Green}SSL Successful for $siteName${Rst}"
 			continue
 		fi
-		echo "${Bold}${Red}SSL unsuccessful for $siteName${Rst}, try again"
+		echo -e "${Bold}${Red}SSL unsuccessful for $siteName${Rst}, try again"
 		exit
 	done
 
 	if [ $allSitesCount == -1 ]
 	then
-		echo "${Red}SSL Installation exiting because one of the following were true"
-		echo "1. You had no sites added (try running 'easy-apache -a' to add site"
-		echo "2. You already have ssl certificates installed"
-		echo "Please check & run SSL Installation again${Rst}"
+		echo -e "${Red}SSL Installation exiting because one of the following were true"
+		echo -e "1. You had no sites added (try running 'easy-apache -a' to add site"
+		echo -e "2. You already have ssl certificates installed"
+		echo -e "Please check & run SSL Installation again${Rst}"
 		exit
 	fi
 
-	echo "Allowing 'Apache Full' in ufw"
+	echo -e "Allowing 'Apache Full' in ufw"
 	sudo ufw delete allow 'Apache'
 	sudo ufw allow 'Apache Full'
+
+	echo -e "SSL added to sites:"
+	temp=-1
+	while [ $temp != $allSitesCount ]
+	do
+		if [ -e /etc/apache2/sites-available/${allSitesURL[$temp]}-le-ssl.conf ]
+		then
+			temp=`expr $temp + 1`
+			echo -e "https://${allSitesURL[$temp]}"
+			continue
+		fi
+		temp=`expr $temp + 1`
+		echo -e "http://"${allSitesURL[$temp]}
+	done
 }
 
 apacheSSLInstall () {
 	apacheInstall
-	echo "${Bold}${Green}Apache Installation complete${Rst}"
-	echo "${Bold}${Green}Proceeding to SSL Installation${Rst}"
+	echo -e "${Bold}${Green}Apache Installation complete${Rst}"
+	echo -e "${Bold}${Green}Proceeding to SSL Installation${Rst}"
 	sslInstall
 }
 
