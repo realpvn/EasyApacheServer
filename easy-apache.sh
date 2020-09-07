@@ -179,7 +179,7 @@ sslInstall () {
 		echo -e "Installing Certbot"
 		sudo add-apt-repository ppa:certbot/certbot
 		sudo apt install python-certbot-apache -y
-	#fi
+	fi
 
 	while true
 	do
