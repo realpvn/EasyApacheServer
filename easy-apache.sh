@@ -60,7 +60,18 @@ apacheInstall () {
 	while true
 	do
 		echo "${Green}===>${Rst} Setting up new site"
+		echo "99 to exit"
 		read -p "URL (do not add www, eg input - helloworld.com): " siteURL
+
+		if [ $siteURL == 99 ]
+		then
+			echo "Good byee..."
+			if [ $allSitesCount == -1 ]
+			then
+				exit
+			fi
+			break
+		fi
 
 		if [ -e /etc/apache2/sites-available/$siteURL.conf ]
 		then
