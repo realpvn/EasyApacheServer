@@ -1,5 +1,8 @@
 #!/bin/sh
 
+allSitesURL=""
+allSitesCount=-1
+
 terminalColors () {
 	# Colors from - https://gist.github.com/5682077.git
 	TC='\e['
@@ -77,6 +80,7 @@ apacheInstall () {
 			esac
 		else
 			addSite $siteURL
+			break
 		fi
 	done
 
@@ -133,7 +137,6 @@ apacheInstall () {
 		echo "http://"${allSitesURL[$temp]}
 	done
 }
-
 
 addSite () {
 	siteURL=$1
