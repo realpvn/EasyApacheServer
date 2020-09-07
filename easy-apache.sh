@@ -40,8 +40,8 @@ help () {
 
 apacheInstall () {
 	echo "${Bold}${Green}Installing Apache${Rst}"
-	allSitesURL=""
-	allSitesCount=-1
+	#allSitesURL=""
+	#allSitesCount=-1
 
 	echo "Updating Server"
 	sudo apt update && sudo apt upgrade -y
@@ -71,7 +71,10 @@ apacheInstall () {
 			echo "${Red}$siteURL already exists, do you want to overwrite (Yy/Nn/99 to exit setup)?${Rst}"
 			read overwriteSite
 			case $overwriteSite in
-				[Yy]* ) addSite $siteURL
+				[Yy]* ) #allSitesURL used for printing at last
+						allSitesCount=`expr $allSitesCount + 1`
+						allSitesURL[$allSitesCount]=$siteURL
+						addSite $siteURL
 						break;;
 				[Nn]* ) continue;;
 				[99]*  ) break;;
@@ -140,9 +143,6 @@ apacheInstall () {
 
 addSite () {
 	siteURL=$1
-	#allSitesURL used for printing at last
-	allSitesCount=`expr $allSitesCount + 1`
-	allSitesURL[$allSitesCount]=$siteURL
 	
 	#used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
 	siteNameNoTLD=`echo $siteURL | cut -d'.' -f1`
