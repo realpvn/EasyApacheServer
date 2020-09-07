@@ -243,12 +243,12 @@ apacheSSLInstall () {
 
 terminalColors
 while getopts 'fash' flag; do
-  case ${flag} in
-    f ) apacheSSLInstall; exit;;
-	a ) apacheInstall; exit;;
-	s ) sslInstall; exit;;
-	h ) help; exit;;
-    * ) help; exit;;
-  esac
+	case ${flag} in
+		f ) apacheSSLInstall; exit;;
+		a ) apacheInstall; exit;;
+		s ) sslInstall; exit;;
+		h ) help; exit;;
+		* ) help; exit;;
+	esac
 done
 help
