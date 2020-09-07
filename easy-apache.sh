@@ -1,8 +1,5 @@
 #!/bin/sh
 
-allSitesURL=""
-allSitesCount=-1
-
 terminalColors () {
 	# Colors from - https://gist.github.com/5682077.git
 	TC='\e['
@@ -40,7 +37,6 @@ help () {
 
 apacheInstall () {
 	echo "${Bold}${Green}Installing Apache${Rst}"
-	allSitesURL=""
 	allSitesCount=-1
 
 	echo "Updating Server"
@@ -71,9 +67,7 @@ apacheInstall () {
 			echo "${Red}$siteURL already exists, do you want to overwrite (Yy/Nn/99 to exit setup)?${Rst}"
 			read overwriteSite
 			case $overwriteSite in
-				[Yy]* ) #allSitesURL used for printing at last
-						allSitesCount=`expr $allSitesCount + 1`
-						allSitesURL[$allSitesCount]=$siteURL
+				[Yy]* ) allSitesCount=`expr $allSitesCount + 1`
 						addSite $siteURL
 						break;;
 				[Nn]* ) continue;;
@@ -125,20 +119,6 @@ apacheInstall () {
 
 	echo "${Bold}${Green}Success! Your site(s) have been added successfully"
 	echo "Point your domains A record to $IP and after DNS propagation everything should be working fine.${Rst}"
-	echo "Sites added and configured are:"
-
-	temp=-1
-	while [ $temp != $allSitesCount ]
-	do
-		if [ -e /etc/apache2/sites-available/${allSitesURL[$temp]}-le-ssl.conf ]
-		then
-			temp=`expr $temp + 1`
-			echo "https://${allSitesURL[$temp]}"
-			continue
-		fi
-		temp=`expr $temp + 1`
-		echo "http://"${allSitesURL[$temp]}
-	done
 }
 
 addSite () {
@@ -167,15 +147,14 @@ addSite () {
 
 sslInstall () {
 	echo "${Bold}${Green}Installing SSL${Rst}"
-	allSitesURL=""
 	allSitesCount=-1
 
-	dpkg -s certbot &> /dev/null
-	if [ $? -eq 1 ]; then
+	#dpkg -s certbot &> /dev/null
+	#if [ $? -eq 1 ]; then
 		echo "Installing Certbot"
 		sudo add-apt-repository ppa:certbot/certbot
 		sudo apt install python-certbot-apache -y
-	fi
+	#fi
 
 	while true
 	do
@@ -205,7 +184,6 @@ sslInstall () {
 		fi
 
 		allSitesCount=`expr $allSitesCount + 1`
-		allSitesURL[$allSitesCount]=$siteName
 		echo ${Purple}`expr $allSitesCount + 1`". "$siteName ${Rst}
 		
 		sudo certbot --apache -d www.$siteName -d $siteName
@@ -230,20 +208,6 @@ sslInstall () {
 	echo "Allowing 'Apache Full' in ufw"
 	sudo ufw delete allow 'Apache'
 	sudo ufw allow 'Apache Full'
-
-	echo "SSL added to sites:"
-	temp=-1
-	while [ $temp != $allSitesCount ]
-	do
-		if [ -e /etc/apache2/sites-available/${allSitesURL[$temp]}-le-ssl.conf ]
-		then
-			temp=`expr $temp + 1`
-			echo "https://${allSitesURL[$temp]}"
-			continue
-		fi
-		temp=`expr $temp + 1`
-		echo "http://"${allSitesURL[$temp]}
-	done
 }
 
 apacheSSLInstall () {
