@@ -40,8 +40,8 @@ help () {
 
 apacheInstall () {
 	echo "${Bold}${Green}Installing Apache${Rst}"
-	#allSitesURL=""
-	#allSitesCount=-1
+	allSitesURL=""
+	allSitesCount=-1
 
 	echo "Updating Server"
 	sudo apt update && sudo apt upgrade -y
