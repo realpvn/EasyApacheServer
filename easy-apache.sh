@@ -86,6 +86,9 @@ apacheInstall () {
 						continue;;
 			esac
 		else
+			#allSitesURL used for printing at last
+			allSitesCount=`expr $allSitesCount + 1`
+			allSitesURL[$allSitesCount]=$siteURL
 			addSite $siteURL
 			break
 		fi
