@@ -19,7 +19,7 @@ That is it! 🤩
 ## Options & Usage
 ```
 Usage:
-easy-apache [options]
+easy-apache.sh [options]
 
 Options:
 -f:   Full setup, default option if none is provided
@@ -28,9 +28,9 @@ Options:
 -h:   Help (shows all commands)"
 
 Example
-easy-apache -f   #for full installation i.e Apache & SSL certificate
-easy-apache -a   #for installating Apache server & SSL certificate
-easy-apache -s   #for installating SSL certificate
+easy-apache.sh -f   #for full installation i.e Apache & SSL certificate
+easy-apache.sh -a   #for installating Apache server & SSL certificate
+easy-apache.sh -s   #for installating SSL certificate
 ```
 
 
