@@ -11,7 +11,7 @@ sudo apt-get install easy-apache
 
 One command to setup everything, installs Apache & SSL
 ```
-easy-apache -f
+easy-apache.sh -f
 ```
 That is it! 🤩
   
