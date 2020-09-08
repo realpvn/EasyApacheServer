@@ -58,13 +58,14 @@ apacheInstall () {
 	while true
 	do
 		echo -e "${Green}===>${Rst} Setting up new site"
+		echo -e "99 to exit"
 		read -p "URL (do not add www, eg input - helloworld.com): " siteURL
 
 		if [ $siteURL == 99 ]
 		then
-			echo "Good byee..."
 			if [ $allSitesCount == -1 ]
 			then
+				echo "Good byee..."
 				exit
 			fi
 			break
@@ -190,9 +191,9 @@ sslInstall () {
 
 		if [ $siteName == 99 ]
 		then
-			echo -e "Good byee..."
 			if [ $allSitesCount == -1 ]
 			then
+				echo -e "Good byee..."
 				exit
 			fi
 			break
