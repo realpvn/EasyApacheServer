@@ -29,8 +29,8 @@ terminalColors () {
 }
 
 help () {
-	echo -e "${Bold}Usage:${Rst}\neasy-apache [options]\n\n${Bold}Options:${Rst}\n-f:\tFull setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available\n-h:\tHelp (shows available commands)${Rst}"
-	echo -e "\n${Bold}Example\n${Rst}./easy-apache -f\t#for full installation i.e Apache & SSL certificate\n./easy-apache -a\t#for installating Apache server\n./easy-apache -s\t#for installating SSL certificate"
+	echo -e "${Bold}Usage:${Rst}\neasy-apache.sh [options]\n\n${Bold}Options:${Rst}\n-f:\tFull setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available\n-h:\tHelp (shows available commands)${Rst}"
+	echo -e "\n${Bold}Example\n${Rst}easy-apache.sh -f\t#for full installation i.e Apache & SSL certificate\neasy-apache.sh -a\t#for installating Apache server\neasy-apache.sh -s\t#for installating SSL certificate"
 }
 
 apacheInstall () {
