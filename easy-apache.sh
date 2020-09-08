@@ -180,8 +180,7 @@ sslInstall () {
 	dpkg -s certbot &> /dev/null
 	if [ $? -eq 1 ]; then
 		echo -e "Installing Certbot"
-		sudo add-apt-repository ppa:certbot/certbot -y
-		sudo apt install python-certbot-apache -y
+		sudo apt install certbot python3-certbot-apache
 	fi
 
 	while true
