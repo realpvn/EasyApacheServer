@@ -10,8 +10,13 @@ sudo apt-get update
 sudo apt-get install easy-apache
 ```
 
-#### Step 3
-Running the script
+#### Step 2
+One command to setup everything, it installs Apache & SSL for your site
+```
+easy-apache -f
+```
+
+#### Options & Usage
 ```
 Usage:
 easy-apache [options]
