@@ -1,24 +1,26 @@
 # Easy Apache
 Easily setup Apache server by using this script, it takes you step by step and setup everything you need
 
-## How to use this script
-#### Step 1
-Clone this repository to your server  
+## How to use easy-apache
+Install easy-apache on to your server (copy paste below lines to your terminal)
 ```
-git clone https://github.com/realpvn/easy-apache.git
-```
-
-#### Step 2
-Change directory to `easy-apache` and give execute permission for `setup.sh`  
-```
-cd easy-apache
-sudo chmod +x setup.sh
+sudo add-apt-repository ppa:realpvn/easy-apache
+sudo apt-get update
+sudo apt-get install easy-apache
 ```
 
-#### Step 3
-Running the script
+One command to setup everything, installs Apache & SSL
 ```
-Usage: easy-apache [options]
+easy-apache.sh -f
+```
+That is it! 🤩
+  
+  
+## Options & Usage
+```
+Usage:
+easy-apache.sh [options]
+
 Options:
 -f:   Full setup, installs apache and ssl for sites
 -a:   Adding new site (includes apache install)
@@ -26,14 +28,14 @@ Options:
 -h:   Help (shows all commands)
 
 Example
-./easy-apache -f   #for full installation i.e Apache & SSL certificate
-./easy-apache -as  #for installating Apache server & SSL certificate
-./easy-apache -h   #for help
+easy-apache.sh -f   #for full installation i.e Apache & SSL certificate
+easy-apache.sh -a   #for installating Apache server & SSL certificate
+easy-apache.sh -s   #for installating SSL certificate
 ```
 
 
 ## Works on
-- Ubuntu servers  
+- Ubuntu 20.04 (focal)  
 (will update more once I test)
 
 Give it a ⭐ if it helped you xD

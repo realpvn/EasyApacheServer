@@ -1,0 +1,30 @@
+easy-apache (2.4-1) focal; urgency=medium
+
+  * Changes to Documentation
+
+ -- R Pavan Kumar <realpvn@gmail.com>  Tue, 08 Sep 2020 08:39:10 +0530
+
+easy-apache (2.3-1) focal; urgency=medium
+
+  * Use certbot from apt repository instead of ppa
+
+ -- R Pavan Kumar <realpvn@gmail.com>  Tue, 08 Sep 2020 07:39:54 +0530
+
+easy-apache (2.2-1) focal; urgency=medium
+
+  * Remove unwanted files
+
+ -- R Pavan Kumar <realpvn@gmail.com>  Mon, 07 Sep 2020 15:30:40 +0530
+
+easy-apache (2.1-1) focal; urgency=medium
+
+  * Fixed server & ssl script missing
+  * Combined multiple scripts into one, so execution is easier & less files to worry about
+
+ -- R Pavan Kumar <realpvn@gmail.com>  Mon, 07 Sep 2020 15:03:29 +0530
+
+easy-apache (2.0-1) focal; urgency=medium
+
+  * Initial release
+
+ -- R Pavan Kumar <realpvn@gmail.com>  Sun, 06 Sep 2020 14:03:29 +0530
