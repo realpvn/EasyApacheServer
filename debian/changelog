@@ -1,3 +1,9 @@
+easy-apache (2.4-1) focal; urgency=medium
+
+  * Changes to Documentation
+
+ -- R Pavan Kumar <realpvn@gmail.com>  Tue, 08 Sep 2020 08:39:10 +0530
+
 easy-apache (2.3-1) focal; urgency=medium
 
   * Use certbot from apt repository instead of ppa
