@@ -1,22 +1,22 @@
 # Easy Apache
 Easily setup Apache server by using this script, it takes you step by step and setup everything you need
 
-## How to use this script
-Install easy-apache on to your server  
+## How to use easy-apache
+Install easy-apache on to your server (copy paste below lines to your terminal)
 ```
 sudo add-apt-repository ppa:realpvn/easy-apache
 sudo apt-get update
 sudo apt-get install easy-apache
 ```
 
-One command to setup everything, installs Apache & SSL for your site
+One command to setup everything, installs Apache & SSL
 ```
 easy-apache -f
 ```
 That is it! 🤩
-
-
-#### Options & Usage
+  
+  
+## Options & Usage
 ```
 Usage:
 easy-apache [options]
