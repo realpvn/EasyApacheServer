@@ -1,3 +1,17 @@
+easy-apache (2.6-1) focal; urgency=medium
+
+  * Fixed a build error 
+
+ -- Pavan Kumar <realpvn@gmail.com>  Wed, 09 Sep 2020 10:22:52 +0530
+
+easy-apache (2.5-1) focal; urgency=medium
+
+  * Improvements to the way script runs
+  * Added better message when SSL installation fails
+  * Added a manpage
+
+ -- R Pavan Kumar <realpvn@gmail.com>  Wed, 09 Sep 2020 10:08:42 +0530
+
 easy-apache (2.4-1) focal; urgency=medium
 
   * Changes to Documentation

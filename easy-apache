@@ -1,12 +1,5 @@
 serverIP=`curl -s icanhazip.com`
 
-echo -e "Updating Server"
-sudo apt update && sudo apt upgrade -y
-echo -e "Server updated"
-
-echo -e "Cleaning after upgrade"
-sudo apt autoremove -y && sudo apt autoclean -y
-
 terminalColors () {
 	# Colors from - https://gist.github.com/5682077.git
 	TC='\e['
@@ -44,6 +37,13 @@ help () {
 
 apacheInstall () {
 	echo -e "${Bold}${Green}Installing Apache${Rst}"
+	echo -e "Updating Server"
+	sudo apt update && sudo apt upgrade -y
+	echo -e "Server updated"
+
+	echo -e "Cleaning after upgrade"
+	sudo apt autoremove -y && sudo apt autoclean -y
+
 	allSitesURL=""
 	allSitesCount=-1
 

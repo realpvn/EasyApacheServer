@@ -1,0 +1,4 @@
+.debhelper
+debhelper-build-stamp
+easy-apache.substvars
+debian/easy-apache
