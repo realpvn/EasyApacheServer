@@ -1,3 +1,12 @@
+serverIP=`curl -s icanhazip.com`
+
+echo -e "Updating Server"
+sudo apt update && sudo apt upgrade -y
+echo -e "Server updated"
+
+echo -e "Cleaning after upgrade"
+sudo apt autoremove -y && sudo apt autoclean -y
+
 terminalColors () {
 	# Colors from - https://gist.github.com/5682077.git
 	TC='\e['
@@ -29,8 +38,8 @@ terminalColors () {
 }
 
 help () {
-	echo -e "${Bold}Usage:${Rst}\neasy-apache.sh [options]\n\n${Bold}Options:${Rst}\n-f:\tFull setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available\n-h:\tHelp (shows available commands)${Rst}"
-	echo -e "\n${Bold}Example\n${Rst}easy-apache.sh -f\t#for full installation i.e Apache & SSL certificate\neasy-apache.sh -a\t#for installating Apache server\neasy-apache.sh -s\t#for installating SSL certificate"
+	echo -e "${Bold}Usage:${Rst}\neasy-apache [options]\n\n${Bold}Options:${Rst}\n-f:\tFull setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available\n-h:\tHelp (shows available commands)${Rst}"
+	echo -e "\n${Bold}Example\n${Rst}easy-apache -f\t#for full installation i.e Apache & SSL certificate\neasy-apache -a\t#for installating Apache server\neasy-apache -s\t#for installating SSL certificate"
 }
 
 apacheInstall () {
@@ -38,15 +47,8 @@ apacheInstall () {
 	allSitesURL=""
 	allSitesCount=-1
 
-	echo -e "Updating Server"
-	sudo apt update && sudo apt upgrade -y
-	echo -e "Server updated"
 
-	echo -e "Cleaning after upgrade"
-	sudo apt autoremove -y && sudo apt autoclean -y
-
-	IP=`curl -s icanhazip.com`
-	echo -e "Server Public IP: ${Purple}"${IP}${Rst}
+	echo -e "Server Public IP: ${Purple}"${serverIP}${Rst}
 
 	dpkg -s apache2 &> /dev/null
 	if [ $? -eq 1 ]; then
@@ -187,7 +189,7 @@ sslInstall () {
 	while true
 	do
 		echo -e "99 to exit"
-		read -p "URL (do not add www, eg input - helloworld.com): " siteName
+		read -p "URL to add SSL (do not add www, eg input - helloworld.com): " siteName
 
 		if [ $siteName == 99 ]
 		then
@@ -220,13 +222,14 @@ sslInstall () {
 			echo -e "${Bold}${Green}SSL Successful for $siteName${Rst}"
 			continue
 		fi
-		echo -e "${Bold}${Red}SSL unsuccessful for $siteName${Rst}, try again"
+		echo -e "${Bold}${Red}SSL unsuccessful for $siteName${Rst}"
+		echo -e "${Bold}${Red}Make sure your domains A record is pointing to your IP: $serverIP${Rst}"
 		exit
 	done
 
 	if [ $allSitesCount == -1 ]
 	then
-		echo -e "${Red}SSL Installation exiting because one of the following were true"
+		echo -e "${Bold}${Red}SSL Installation exiting because one of the following were true"
 		echo -e "1. You had no sites added (try running 'easy-apache -a' to add site"
 		echo -e "2. You already have ssl certificates installed"
 		echo -e "Please check & run SSL Installation again${Rst}"
