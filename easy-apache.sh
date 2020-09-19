@@ -221,6 +221,10 @@ sslInstall () {
 	while true
 	do
 		read -p "Site URL to add SSL (99 - Exit): " siteName
+		if [[ -z "$userInput" ]]; then
+			printFailed "Site URL empty"
+			continue
+		else
 
 		if [ $siteName == 99 ]
 		then
@@ -236,7 +240,8 @@ sslInstall () {
 		if [[ ! $siteName =~ $re ]]
 		then
 			printFailed "Invalid URL"
-			exit
+			printInfo "Example site URL - example.com"
+			continue
 		fi
 
 		if [ ! -e /etc/apache2/sites-available/${siteName}.conf ]
