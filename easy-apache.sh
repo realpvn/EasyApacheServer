@@ -208,7 +208,7 @@ addSite () {
 }
 
 sslInstall () {
-	printInfo "SSL Installation"
+	printNormal "SSL Installation"
 	allSitesURL=""
 	allSitesCount=-1
 
@@ -221,7 +221,7 @@ sslInstall () {
 	while true
 	do
 		read -p "Site URL to add SSL (99 - Exit): " siteName
-		if [[ -z "$userInput" ]]
+		if [[ -z "$siteName" ]]
 		then
 			printFailed "Site URL empty"
 			continue
