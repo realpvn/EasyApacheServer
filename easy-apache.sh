@@ -85,7 +85,7 @@ apacheInstall () {
 		if [[ -z "$siteURL" ]]
 		then
 			printFailed "Site URL empty"
-			continue
+			break
 		fi
 
 		if [ $siteURL == 99 ]
@@ -134,7 +134,6 @@ apacheInstall () {
 
 	if [ $allSitesCount == -1 ]
 	then
-		printInfo "No Sites were added${Rst}"
 		exit
 	fi
 
@@ -230,7 +229,7 @@ sslInstall () {
 		if [[ -z "$siteName" ]]
 		then
 			printFailed "Site URL empty"
-			continue
+			break
 		fi
 
 		if [ $siteName == 99 ]
@@ -282,7 +281,7 @@ sslInstall () {
 	then
 		printFailed "SSL Installation failed"
 		printInfo "Reasons for failure"
-		printInfo "1. You had no sites added (try running 'easy-apache -a' to add site"
+		printInfo "1. You do not have any sites added (use 'easy-apache -a' to add site)"
 		printInfo "2. You already have ssl certificates installed"
 		printInfo "Please check & run SSL Installation again"
 		exit
