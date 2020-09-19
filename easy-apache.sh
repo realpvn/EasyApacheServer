@@ -102,7 +102,7 @@ apacheInstall () {
 		if [[ ! $siteURL =~ $re ]]
 		then
 			printFailed "Invalid URL"
-			exit
+			continue
 		fi
 
 		printSuccess "URL Valid"
