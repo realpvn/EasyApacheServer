@@ -221,10 +221,11 @@ sslInstall () {
 	while true
 	do
 		read -p "Site URL to add SSL (99 - Exit): " siteName
-		if [[ -z "$userInput" ]]; then
+		if [[ -z "$userInput" ]]
+		then
 			printFailed "Site URL empty"
 			continue
-		else
+		fi
 
 		if [ $siteName == 99 ]
 		then
