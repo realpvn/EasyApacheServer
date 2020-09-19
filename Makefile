@@ -1,9 +1,9 @@
 deb:
 	@echo "Building Debian Package"
 	@make -s clean
-	#@echo DEBEMAIL="realpvn@gmail.com" >> ~/.bashrc
-	#@echo DEBFULLNAME="Pavan Kumar" >> ~/.bashrc
-	#@echo export DEBEMAIL DEBFULLNAME >> ~/.bashrc
+	@echo DEBEMAIL="realpvn@gmail.com" >> ~/.bashrc
+	@echo DEBFULLNAME="Pavan Kumar" >> ~/.bashrc
+	@echo export DEBEMAIL DEBFULLNAME >> ~/.bashrc
 	@read -p "Version: " ver; \
 	cp easy-apache.sh easy-apache
 	dch -v $$ver; \
