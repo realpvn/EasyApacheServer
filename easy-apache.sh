@@ -54,11 +54,13 @@ help () {
 
 apacheInstall () {
 	printNormal "Updating Server"
-	sudo apt update -y && sudo apt upgrade -y
+	sudo apt update -y &> /dev/null
+	sudo apt upgrade -y &> /dev/null
 	printSuccess "Server updated"
 
 	printNormal "Cleaning after upgrade"
-	sudo apt autoremove -y && sudo apt autoclean -y
+	sudo apt autoremove -y &> /dev/null
+	sudo apt autoclean -y &> /dev/null
 	printSuccess "Cleaned"
 
 	allSitesURL=""
