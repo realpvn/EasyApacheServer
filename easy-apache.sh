@@ -242,7 +242,7 @@ sslInstall () {
 		if [ ! -e /etc/apache2/sites-available/${siteName}.conf ]
 		then
 			printFailed "${siteName} does not exist"
-			printInfo "Use './easy-apache -a' to add a site"
+			printInfo "Use 'easy-apache -a' to add a site"
 			continue
 		fi
 
