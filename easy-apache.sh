@@ -159,7 +159,7 @@ apacheInstall () {
 		printSuccess "UFW already enabled"
 	fi
 
-	sudo a2dissite 000-default.conf
+	sudo a2dissite 000-default.conf &> /dev/null
 	printSuccess "Disabled default site"
 
 	sudo systemctl restart apache2
@@ -209,7 +209,7 @@ addSite () {
 	echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName $siteURL\n\tServerAlias www.$siteURL\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/$siteURL.conf
 	printSuccess "Site $siteURL configured successfully"
 
-	sudo a2ensite $siteURL.conf
+	sudo a2ensite $siteURL.conf &> /dev/null
 	printSuccess "Enabled configuration for $siteURL"
 }
 
