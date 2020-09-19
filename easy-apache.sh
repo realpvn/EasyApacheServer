@@ -201,11 +201,12 @@ addSite () {
 	sudo echo -e "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" &> /var/www/$siteNameNoTLD/index.html
 
 	printSuccess "Site $siteURL created"
+	printNormal "Configuring"
 	read -p "Email (leave blank if not required):" siteEmail
 	if [ -z $siteEmail ]; then
 		siteEmail=dev@localhost
 	fi
-	echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName $siteURL\n\tServerAlias www.$siteURL\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" &> /etc/apache2/sites-available/$siteURL.conf
+	sudo echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName $siteURL\n\tServerAlias www.$siteURL\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" &> /etc/apache2/sites-available/$siteURL.conf
 	printSuccess "Site $siteURL configured successfully"
 
 	sudo a2ensite $siteURL.conf
