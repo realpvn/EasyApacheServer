@@ -82,6 +82,12 @@ apacheInstall () {
 		printInfo "Setting up new site"
 		read -p "Site URL (99 - exit): " siteURL
 
+		if [[ -z "$siteURL" ]]
+		then
+			printFailed "Site URL empty"
+			continue
+		fi
+
 		if [ $siteURL == 99 ]
 		then
 			if [ $allSitesCount == -1 ]
@@ -249,7 +255,7 @@ sslInstall () {
 		then
 			printFailed "${siteName} does not exist"
 			printInfo "Use 'easy-apache -a' to add a site"
-			continue
+			exit
 		fi
 
 		if [ -e /etc/apache2/sites-available/${siteName}-le-ssl.conf ]
