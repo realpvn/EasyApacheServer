@@ -54,28 +54,24 @@ help () {
 
 apacheInstall () {
 	printInfo "Server Public IP: ${Yellow}${Bold}"${serverIP}${Rst}
-	
-	printNormal "Updating Server"
+
+	printNormal "Updating Server, might take few mins"
 	sudo apt update -y &> /dev/null
 	printNormal "Almost done"
 	sudo apt upgrade -y &> /dev/null
-	printSuccess "Done"
+	printSuccess "Updated"
 
-	printNormal "Cleaning after upgrade"
 	sudo apt autoremove -y &> /dev/null
 	sudo apt autoclean -y &> /dev/null
-	printSuccess "Done"
+	printSuccess "Cleaned after server update"
 
 	allSitesURL=""
 	allSitesCount=-1
 
-	printNormal "Apache Installation"
-
 	dpkg -s apache2 &> /dev/null
 	if [ $? -eq 1 ]; then
-		printNormal "Installing Apache 2"
 		sudo apt install apache2 -y &> /dev/null
-		printSuccess "Done"
+		printSuccess "Apache Installed"
 		printInfo "${Yellow}${Bold}Apache `apache2 -v`${Rst}"
 	else
 		printSuccess "Apache already Installed"
@@ -86,7 +82,6 @@ apacheInstall () {
 		printInfo "Setting up new site"
 		read -p "Site URL (99 - exit): " siteURL
 
-		printSuccess "Valid URL"
 		if [ $siteURL == 99 ]
 		then
 			if [ $allSitesCount == -1 ]
@@ -104,9 +99,12 @@ apacheInstall () {
 			exit
 		fi
 
+		printSuccess "URL Valid"
+
 		if [ -e /etc/apache2/sites-available/$siteURL.conf ]
 		then
-			echo -e "${Red}$siteURL already exists, do you want to overwrite (Yy/Nn/99 to exit setup)?${Rst}"
+			printFailed "$siteURL already exists"
+			printInfo "Do you want to overwrite $siteURL? (Yy/Nn/99 to exit setup)"
 			read overwriteSite
 			case $overwriteSite in
 				[Yy]* ) #allSitesURL used for printing at last
@@ -134,7 +132,6 @@ apacheInstall () {
 		exit
 	fi
 
-	printNormal "Checking UFW"
 	if sudo ufw status | grep -q inactive$
 	then
 		printInfo "UFW is disabled. You need to enable it to continue..."
@@ -143,12 +140,11 @@ apacheInstall () {
 		do
 			read -p "Do you want to enable now (Yy/Nn)? " ufwEnable
 			case $ufwEnable in
-				[Yy]* ) sudo ufw enable;
+				[Yy]* ) echo "y" | sudo ufw enable &> /dev/null;
 						printSuccess "UFW enabled"
-						printNormal "Allowing SSH & Apache ports"
-						sudo ufw allow ssh;
-						sudo ufw allow Apache;
-						printSuccess "Done"
+						sudo ufw allow ssh &> /dev/null;
+						sudo ufw allow Apache &> /dev/null;
+						printSuccess "Allowed SSH & Apache in ufw"
 						break;;
 				[Nn]* ) printInfo "You cannot view the site until you enable ufw and allow SSH & Apache"; break;;
 					* ) echo -e "Please answer yes(Yy) or no(Nn) ";;
@@ -158,13 +154,11 @@ apacheInstall () {
 		printSuccess "UFW already enabled"
 	fi
 
-	printNormal "Disabling default site (/var/www/html)"
 	sudo a2dissite 000-default.conf
-	printSuccess "Done"
+	printSuccess "Disabled default site"
 
-	printNormal "Restarting Apache2 to activate new configuration"
 	sudo systemctl restart apache2
-	printSuccess "Done"
+	printSuccess "Apache restart success"
 
 	#TODO(pavank): try to check if site is available at server ${IP}
 
@@ -201,17 +195,16 @@ addSite () {
 	#create temporary index.html page for viewing
 	sudo echo -e "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" > /var/www/$siteNameNoTLD/index.html
 
-	printNormal "Site $siteURL created, configuring"
+	printNormal "Site $siteURL created"
 	read -p "Email (leave blank if not required):" siteEmail
 	if [ -z $siteEmail ]; then
 		siteEmail=dev@localhost
 	fi
 	echo -e "<VirtualHost *:80>\n\tServerAdmin $siteEmail\n\tServerName $siteURL\n\tServerAlias www.$siteURL\n\tDocumentRoot /var/www/$siteNameNoTLD\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee /etc/apache2/sites-available/$siteURL.conf
-	printSuccess "Done"
+	printSuccess "Site $siteURL configured successfully"
 
-	printInfo "Enabling site configuration"
 	sudo a2ensite $siteURL.conf
-	printSuccess "Done"
+	printSuccess "Enabled configuration for $siteURL"
 }
 
 sslInstall () {
@@ -221,14 +214,13 @@ sslInstall () {
 
 	dpkg -s certbot &> /dev/null
 	if [ $? -eq 1 ]; then
-		printInfo "Installing Certbot"
-		sudo apt install certbot python3-certbot-apache
-		printSuccess "Done"
+		sudo apt install certbot python3-certbot-apache -y &> /dev/null
+		printSuccess "Installed Certbot"
 	fi
 
 	while true
 	do
-		read -p "Site URL (99 - Exit): " siteName
+		read -p "Site URL to add SSL (99 - Exit): " siteName
 
 		if [ $siteName == 99 ]
 		then
@@ -284,10 +276,9 @@ sslInstall () {
 		exit
 	fi
 
-	printInfo "Allowing 'Apache Full' in ufw"
-	sudo ufw delete allow 'Apache'
-	sudo ufw allow 'Apache Full'
-	printSuccess "Done"
+	sudo ufw delete allow 'Apache' &> /dev/null
+	sudo ufw allow 'Apache Full' &> /dev/null
+	printSuccess "Apache Full allowed in ufw"
 
 	echo -e "SSL added to sites:"
 	temp=-1
