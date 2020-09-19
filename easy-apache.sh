@@ -21,30 +21,30 @@ terminalColors () {
 
 	Crossed="\u2718"
 
-	#copy pasted tick because unicode was acting weird, like hiding following square brackets, only black visible etc
+	#copy pasted tick symbold because unicode was acting weird
 	Ticked="✓"
 	Info="!"
 
-	Oper=${Bold}${Green}'[ * ]'${Rst}
-	OperSuccess=${Bold}${Green}'[ '${Ticked}' ]'${Rst}
-	OperFailed=${Bold}${Red}'[ '${Crossed}' ]'${Rst}
-	Info=${Bold}${Yellow}'[ '${Info}' ]'$Rst
+	Oper=${Bold}'[ * ]'
+	OperSuccess=${Bold}${Green}'[ '${Ticked}' ]'
+	OperFailed=${Bold}${Red}'[ '${Crossed}' ]'
+	Info=${Bold}${Yellow}'[ '${Info}' ]'
 }
 
 printNormal () {
-	echo -e "${Oper} $1";
+	echo -e "${Oper} $1$Rst";
 }
 
 printSuccess() {
-	echo -e "${OperSuccess} $1"
+	echo -e "${OperSuccess} $1$Rst"
 }
 
 printFailed() {
-	echo -e "${OperFailed} $1"
+	echo -e "${OperFailed} $1$Rst"
 }
 
 printInfo() {
-	echo -e "${Info} $1"
+	echo -e "${Info} $1$Rst"
 }
 
 help () {
@@ -53,27 +53,29 @@ help () {
 }
 
 apacheInstall () {
+	printInfo "Server Public IP: ${Yellow}${Bold}"${serverIP}${Rst}
+	
 	printNormal "Updating Server"
 	sudo apt update -y &> /dev/null
+	printNormal "Almost done"
 	sudo apt upgrade -y &> /dev/null
-	printSuccess "Server updated"
+	printSuccess "Done"
 
 	printNormal "Cleaning after upgrade"
 	sudo apt autoremove -y &> /dev/null
 	sudo apt autoclean -y &> /dev/null
-	printSuccess "Cleaned"
+	printSuccess "Done"
 
 	allSitesURL=""
 	allSitesCount=-1
 
 	printNormal "Apache Installation"
-	printInfo "Server Public IP: ${Yellow}${Bold}"${serverIP}${Rst}
 
 	dpkg -s apache2 &> /dev/null
 	if [ $? -eq 1 ]; then
 		printNormal "Installing Apache 2"
 		sudo apt install apache2 -y &> /dev/null
-		printSuccess "Apache Installed"
+		printSuccess "Done"
 		printInfo "${Yellow}${Bold}Apache `apache2 -v`${Rst}"
 	else
 		printSuccess "Apache already Installed"
