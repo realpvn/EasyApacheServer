@@ -1,28 +1,27 @@
 deb:
 	@echo "Building Debian Package"
 	@make -s clean
-
-ifndef DEBEMAIL
-	@echo DEBEMAIL="realpvn@gmail.com" >> ~/.bashrc
-	@echo DEBFULLNAME="Pavan Kumar" >> ~/.bashrc
-	@echo export DEBEMAIL DEBFULLNAME >> ~/.bashrc
-	@source ~/.bashrc
-endif
-	@echo Old Version: `head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1 | cut -d '-' -f1`
+	@echo Old Version: `head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`
 	@cp easy-apache.sh easy-apache
 	@read -p "Version: " ver; \
-	dch -v $$ver; \
-	dh_make -p easy-apache_$$ver --indep --createorig -c gpl3 -e realpvn@gmail.com
+	dch -v $$ver;
+	@echo "done"
+	@curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`; \
+	echo dh_make -p easy-apache_$$curVer --indep --createorig -c gpl3 -e realpvn@gmail.com
+	@make -s debSource
+
+debSource:
 	@debuild -S
-	@make -s clean
 
 debBinary:
 	@make -s deb
-	debuild
+	@debuild
+	@make -s clean
 
 clean:
 	@echo "Cleaning build"
 	@rm -f easy-apache ../easy-apache_*
+	@git checkout debian/changelog
 
 upload:
 	@curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`; \
