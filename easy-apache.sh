@@ -1,4 +1,4 @@
-cat banner
+cat easy-banner.txt
 serverIP=`curl -s icanhazip.com`
 
 terminalColors () {
