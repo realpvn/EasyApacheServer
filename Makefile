@@ -8,24 +8,22 @@ ifndef DEBEMAIL
 	@echo export DEBEMAIL DEBFULLNAME >> ~/.bashrc
 	@source ~/.bashrc
 endif
-
+	@echo Old Version: `head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1 | cut -d '-' -f1`
+	@cp easy-apache.sh easy-apache
 	@read -p "Version: " ver; \
-	cp easy-apache.sh easy-apache
 	dch -v $$ver; \
 	dh_make -p easy-apache_$$ver --indep --createorig -c gpl3 -e realpvn@gmail.com
-	debuild -S
+	@debuild -S
 	@make -s clean
+
+debBinary:
+	@make -s deb
 	debuild
 
 clean:
 	@echo "Cleaning build"
-ifneq ("$(wildcard $(easy-apache))","")
-	@rm easy-apache
-endif
-	
-ifneq ("$(wildcard $(../easy-apache_*))","")
-	@rm ../easy-apache_*
-endif
+	@rm -f easy-apache ../easy-apache_*
 
 upload:
-	@dput ppa:realpvn/easy-apache easy-apache_*_source.changes
+	@curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`; \
+	dput ppa:realpvn/easy-apache easy-apache_$$curVer_source.changes
