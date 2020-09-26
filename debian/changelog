@@ -1,3 +1,9 @@
+easy-apache (2.7-1) focal; urgency=medium
+
+  * Major improvements 
+
+ -- Pavan Kumar <realpvn@gmail.com>  Sat, 26 Sep 2020 12:58:41 +0530
+
 easy-apache (2.6-1) focal; urgency=medium
 
   * Fixed a build error 
