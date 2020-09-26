@@ -1,6 +1,6 @@
 clean () {
     echo "Cleaning build"
-    rm easy-apache ../easy-apache_*
+    rm -f easy-apache ../easy-apache_*
     git checkout debian/changelog
 }
 
@@ -19,6 +19,10 @@ build () {
 source () {
     build
     debuild -S
+    read -p "Do you want to upload? (Y/N): " verCheck
+    case $verCheck in
+        [Yy]* ) upload;;
+    esac
 }
 
 binary () {
@@ -33,7 +37,7 @@ upload () {
     case $verCheck in
         [Yy]* ) echo "Starting Upload"
                 cd ..
-                dput ppa:realpvn/easy-apache easy-apache_$$curVer_source.changes;;
+                dput ppa:realpvn/easy-apache easy-apache_${curVer}_source.changes;;
         [Nn]* ) echo "Terminating upload";;
             * ) echo "Wrong input";;
     esac
