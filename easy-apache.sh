@@ -1,4 +1,8 @@
-cat easy-banner.txt
+dpkg -s curl &> /dev/null
+if [ $? -eq 1 ]; then
+	sudo apt install curl -y &> /dev/null
+fi
+curl https://raw.githubusercontent.com/realpvn/easy-apache/master/easy-banner.txt
 serverIP=`curl -s icanhazip.com`
 
 terminalColors () {
