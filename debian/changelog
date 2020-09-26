@@ -1,3 +1,15 @@
+easy-apache (2.9-1) focal; urgency=medium
+
+  * Remove makefile for now as its not neccessary 
+
+ -- Pavan Kumar <realpvn@gmail.com>  Sat, 26 Sep 2020 13:35:48 +0530
+
+easy-apache (2.8-1) focal; urgency=medium
+
+  * Fixed few makefile errors
+
+ -- Pavan Kumar <realpvn@gmail.com>  Sat, 26 Sep 2020 13:19:28 +0530
+
 easy-apache (2.7-1) focal; urgency=medium
 
   * Major improvements 
