@@ -19,18 +19,24 @@ build () {
 source () {
     build
     debuild -S
-    read -p "Do you want to upload? (Y/N): " verCheck
-    case $verCheck in
+    read -p "Do you want to upload? (Y/N): " wantUpload
+    case $wantUpload in
         [Yy]* ) upload;;
     esac
 }
 
 binary () {
+    read -p "Do you want to clean now? (Y/N): " cleanNow
+    case $cleanNow in
+        [Yy]* ) clean;;
+        [Nn]* ) echo "You must clean to build binary, exiting..."
+                exit;;
+            * ) exit;;
+    esac
+    cp easy-apache.sh easy-apache
     curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1 | cut -d '-' -f1`
-    if [[ ! -e ../easy-apache_${curVer}.orig.tar.xz ]]
-    then
-        build
-    fi
+    Current Version: $curVer
+    dh_make -p easy-apache_$curVer --indep --createorig -c gpl3 -e realpvn@gmail.com
     debuild
 }
 
