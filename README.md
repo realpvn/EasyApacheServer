@@ -8,11 +8,11 @@ Easily setup Apache server by using this script, it takes you step by step and s
 ## Install
 Installing easy-apache on to your server is easy too 😛 Just copy & paste below command(s) to your server terminal
 
-#### Using Snap
+##### Using Snap
 ```
 sudo snap install easy-apache
 ```
-#### Using apt
+##### Using apt
 ```
 sudo add-apt-repository ppa:realpvn/easy-apache
 sudo apt update
