@@ -47,5 +47,3 @@ easy-apache -s   #for installating SSL certificate
 ## Works on
 - Ubuntu 20.04 (focal)  
 (will update more once I test)
-
-Give it a ⭐ if it helped you xD
