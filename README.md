@@ -8,7 +8,7 @@ Easily setup Apache server by using this script, it takes you step by step and s
 ## Install
 Installing easy-apache on to your server is easy too 😛 Just copy & paste below command(s) to your server terminal
 
-##### Using Snap
+##### Using Snap (don't use snap as it gives some error, I will remove this if it gets fixed)
 ```
 sudo snap install easy-apache
 ```
