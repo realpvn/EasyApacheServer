@@ -1,17 +1,8 @@
 # Easy Apache
 Easily setup Apache server by using this script, it takes you step by step and setup everything you need
 
-<a href="https://snapcraft.io/easy-apache">
-<img alt="Get it from the Snap Store" src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" />
-</a>
-
 ## Install
 Installing easy-apache on to your server is easy too 😛 Just copy & paste below command(s) to your server terminal
-
-##### Using Snap (don't use snap as it has some problems, I will remove this if it gets fixed)
-```
-sudo snap install easy-apache
-```
 ##### Using apt
 ```
 sudo add-apt-repository ppa:realpvn/easy-apache
