@@ -51,8 +51,8 @@ printInfo() {
 }
 
 help () {
-	echo -e "${Bold}Usage:${Rst}\neasy-apache [options]\n\n${Bold}Options:${Rst}\n-f:\tFull setup, default option if none is provided\n-a:\tAdding new site (includes apache install)\n-s:\tInstall SSL certificate for sites available\n-h:\tHelp (shows available commands)${Rst}"
-	echo -e "\n${Bold}Example\n${Rst}easy-apache -f\t#for full installation i.e Apache & SSL certificate\neasy-apache -a\t#for installating Apache server\neasy-apache -s\t#for installating SSL certificate"
+	echo -e "${Bold}Usage:${Rst}\neasy-apache [options]\n\n${Bold}Options:${Rst}\n-f | --full:\t\tFull setup, default option if none is provided\n-a | --apache:\t\tAdding new site (includes apache install)\n-s | --SSL:\t\tInstall SSL certificate for sites available\n-h | --help:\t\tHelp (shows available commands)${Rst}"
+	echo -e "\n${Bold}Example\n${Rst}easy-apache -f\t\t\t#for full installation i.e Apache & SSL certificate\neasy-apache --full\t\t#for full installation i.e Apache & SSL certificate\neasy-apache -a\t\t\t#for installating Apache server\neasy-apache -s\t\t\t#for installating SSL certificate"
 }
 
 apacheInstall () {
@@ -312,13 +312,15 @@ apacheSSLInstall () {
 }
 
 terminalColors
-while getopts 'fash' flag; do
-	case ${flag} in
-		f ) apacheSSLInstall; exit;;
-		a ) apacheInstall; exit;;
-		s ) sslInstall; exit;;
-		h ) help; exit;;
-		* ) help; exit;;
-	esac
-done
+if [ "$1" != "" ]
+then
+    PARAM=$1
+    case $PARAM in
+        -f | --full 	 ) apacheSSLInstall; exit;;
+        -a | --apache 	 ) apacheInstall; exit;;
+        -s | --SSL       ) sslInstall; exit;;
+        -h | --help      ) help; exit;;
+                        *) help; exit;;
+    esac
+fi
 help
