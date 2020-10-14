@@ -2,7 +2,7 @@
 Easily setup Apache server by using this script, it takes you step by step and setup everything you need
 
 ## Install
-Installing easy-apache on to your server is easy too 😛 Just copy & paste below command(s) to your server terminal
+Installing easy-apache on to your server is easy too. Just copy & paste below command(s) to your server terminal
 ##### Using apt
 ```
 sudo add-apt-repository ppa:realpvn/easy-apache
