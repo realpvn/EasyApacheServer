@@ -23,15 +23,16 @@ Usage:
 easy-apache [options]
 
 Options:
--f:   Full setup, installs apache and ssl for sites
--a:   Adding new site (includes apache install)
--s:   Install SSL certificate for sites available
--h:   Help (shows all commands)
+-f | --full:            Full setup, default option if none is provided
+-a | --apache:          Adding new site (includes apache install)
+-s | --SSL:             Install SSL certificate for sites available
+-h | --help:            Help (shows available commands)
 
 Example
-easy-apache -f   #for full installation i.e Apache & SSL certificate
-easy-apache -a   #for installating Apache server & SSL certificate
-easy-apache -s   #for installating SSL certificate
+easy-apache -f                  #for full installation i.e Apache & SSL certificate
+easy-apache --full              #for full installation i.e Apache & SSL certificate
+easy-apache -a                  #for installating Apache server
+easy-apache -s                  #for installating SSL certificate
 ```
 
 
