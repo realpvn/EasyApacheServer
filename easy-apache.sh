@@ -1,3 +1,5 @@
+#!/bin/bash
+
 dpkg -s curl &> /dev/null
 if [ $? -eq 1 ]; then
 	sudo apt install curl -y &> /dev/null

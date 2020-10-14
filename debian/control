@@ -10,7 +10,7 @@ Homepage: https://github.com/realpvn/easy-apache.git
 
 Package: easy-apache
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends}, apache2 (>= 2.4)
 Description: Easy Apache is a simple script which helps in installing Apache server and SSL certificates for Apache sites.
  Easy Apache is a simple script that helps in installing Apache server and SSL certificates for Apache sites.
  It'll ask you for a few questions like domain name if you want to install
