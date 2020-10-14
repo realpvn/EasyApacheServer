@@ -1,9 +1,3 @@
-clean () {
-    echo "Cleaning build"
-    rm -f easy-apache ../easy-apache_*
-    git checkout debian/changelog
-}
-
 updateDebVersion() {
     oldVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`
     echo Old Version: $oldVer
@@ -54,6 +48,19 @@ buildDebBinary () {
     debuild
 }
 
+buildSnap() {
+    cp easy-apache.sh snap/
+    cd snap
+    snapcraft
+}
+
+clean () {
+    echo "Cleaning build"
+    rm -f easy-apache ../easy-apache_*
+    git checkout debian/changelog
+    rm -f snap/easy-apache.sh
+}
+
 uploadPPA () {
     curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`
     echo "Current version: $curVer"
@@ -75,7 +82,7 @@ then
                             exit;;
         -db | --debBinary ) buildDebBinary;
                             exit;;
-        -sn | --snap      ) echo "Coming soon";
+        -sn | --snap      ) buildSnap;
                             exit;;
         -c | --clean      ) clean;
                             exit;;
