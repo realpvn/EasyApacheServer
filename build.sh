@@ -1,46 +1,67 @@
-clean () {
-    echo "Cleaning build"
-    rm -f easy-apache ../easy-apache_*
-    git checkout debian/changelog
-}
-
-build () {
-    echo "Building Debian Package"
-    clean
-    cp easy-apache.sh easy-apache
+updateDebVersion() {
     oldVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`
     echo Old Version: $oldVer
     read -p "New Version: " ver
     dch -v $ver
+}
+
+makeDeb () {
+    echo "Running make"
+    clean
+    cp easy-apache.sh easy-apache
+    read -p "Have you updated version? (Y/N): " verUpdate
+    case $verUpdate in
+        [Yy]* ) echo "Continuing....";;
+        [Nn]* ) read -p "Do you want to update version now? (Y/N): " verUpdate;
+                case $verUpdate in
+                    [Yy]* ) updateDebVersion;;
+                    [Nn]* ) echo "You have to update version to continue";
+                            exit;;
+                        * ) echo "Invalid input";
+                            exit;;
+                esac;;
+            * ) exit;;
+    esac
     curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1 | cut -d '-' -f1`
     dh_make -p easy-apache_$curVer --indep --createorig -c gpl3 -e realpvn@gmail.com
 }
 
-source () {
-    build
+buildDebSource () {
+    makeDeb
     debuild -S
-    read -p "Do you want to upload? (Y/N): " wantUpload
+    read -p "Do you want to upload Package to PPA? (Y/N): " wantUpload
     case $wantUpload in
-        [Yy]* ) upload;;
+        [Yy]* ) uploadPPA;;
     esac
 }
 
-binary () {
-    read -p "Do you want to clean now? (Y/N): " cleanNow
+buildDebBinary () {
+    echo "Note: Binary is only to use in github or distribute. Binary can't be uploaded to PPA"
+    read -p "This will deleted any deb source files, do you want to proceed? (Y/N): " cleanNow
     case $cleanNow in
-        [Yy]* ) clean;;
+        [Yy]* ) echo "Continuing....";;
         [Nn]* ) echo "You must clean to build binary, exiting..."
                 exit;;
             * ) exit;;
     esac
-    cp easy-apache.sh easy-apache
-    curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1 | cut -d '-' -f1`
-    Current Version: $curVer
-    dh_make -p easy-apache_$curVer --indep --createorig -c gpl3 -e realpvn@gmail.com
+    makeDeb
     debuild
 }
 
-upload () {
+buildSnap() {
+    cp easy-apache.sh snap/
+    cd snap
+    snapcraft
+}
+
+clean () {
+    echo "Cleaning build"
+    rm -f easy-apache ../easy-apache_*
+    git checkout debian/changelog
+    rm -f snap/easy-apache.sh
+}
+
+uploadPPA () {
     curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`
     echo "Current version: $curVer"
     read -p "Is the current version correct? (Y/N): " verCheck
@@ -53,18 +74,22 @@ upload () {
     esac
 }
 
-while getopts 'scub' flag
-do
-    case $flag in 
-        s ) source
-            exit;;
-        c ) clean
-            exit;;
-        u ) upload
-            exit;;
-        b ) binary
-            exit;;
-        * ) echo "Use option -s to build deb source Package"
+if [ "$1" != "" ]
+then
+    PARAM=$1
+    case $PARAM in
+        -ds | --debSource ) buildDebSource;
+                            exit;;
+        -db | --debBinary ) buildDebBinary;
+                            exit;;
+        -sn | --snap      ) buildSnap;
+                            exit;;
+        -c | --clean      ) clean;
+                            exit;;
+        -u | --uploadPPA  ) uploadPPA;
+                            exit;;
+                        * ) echo -e "Usage:\n-ds | --debSource:\t Generates debian source file\n-db | --debBinary:\t Generates debian binary file\n-sn | --snap:\t\t Generates Snap Package\n-c | --clean:\t\t Cleans directory, removes all build files etc\n-u | --uploadPPA:\t Uploads source file to PPA";
+                            exit;;
     esac
-done
-echo "Use option -s to build deb source Package"
+fi
+echo -e "Usage:\n-ds | --debSource:\t Generates debian source file\n-db | --debBinary:\t Generates debian binary file\n-sn | --snap:\t Generates Snap Package\n-c | --clean:\t\t Cleans directory, removes all build files etc\n-u | --uploadPPA:\t Uploads source file to PPA";

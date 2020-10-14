@@ -1,3 +1,9 @@
+easy-apache (2.12-1) focal; urgency=medium
+
+  * Remove dpkg usage since it will create problems for snap packages 
+
+ -- Pavan Kumar <realpvn@gmail.com>  Wed, 14 Oct 2020 17:46:17 +0530
+
 easy-apache (2.11-1) focal; urgency=medium
 
   * Remove unneccessary files from user bin

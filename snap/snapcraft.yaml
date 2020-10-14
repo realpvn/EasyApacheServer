@@ -14,11 +14,13 @@ confinement: strict
 parts:
   easy-apache:
     plugin: dump
-    source: https://github.com/realpvn/easy-apache/archive/2.11.tar.gz
+    source: .
     stage-packages:
       - curl
-      - dpkg
+      - apache2
 
 apps:
   easy-apache:
     command: easy-apache.sh
+    plugs:
+      - network

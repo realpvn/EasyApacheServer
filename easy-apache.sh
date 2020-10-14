@@ -1,7 +1,6 @@
-dpkg -s curl &> /dev/null
-if [ $? -eq 1 ]; then
-	sudo apt install curl -y &> /dev/null
-fi
+#!/bin/bash
+
+sudo apt install curl -y &> /dev/null
 curl https://raw.githubusercontent.com/realpvn/easy-apache/master/easy-banner.txt
 serverIP=`curl -s icanhazip.com`
 
@@ -59,12 +58,14 @@ help () {
 apacheInstall () {
 	printInfo "Server Public IP: ${Yellow}${Bold}"${serverIP}${Rst}
 
-	printNormal "Updating Server, might take few mins"
+	# Updating Server
+	printNormal "Updating Server"
 	sudo apt update -y &> /dev/null
-	printNormal "Almost done"
+	printNormal "Almost done, this might take few more mins"
 	sudo apt upgrade -y &> /dev/null
 	printSuccess "Updated"
 
+	# Cleaning after server update
 	sudo apt autoremove -y &> /dev/null
 	sudo apt autoclean -y &> /dev/null
 	printSuccess "Cleaned after server update"
@@ -72,14 +73,10 @@ apacheInstall () {
 	allSitesURL=""
 	allSitesCount=-1
 
-	dpkg -s apache2 &> /dev/null
-	if [ $? -eq 1 ]; then
-		sudo apt install apache2 -y &> /dev/null
-		printSuccess "Apache Installed"
-		printInfo "${Yellow}${Bold}Apache `apache2 -v`${Rst}"
-	else
-		printSuccess "Apache already Installed"
-	fi
+	# Installing apache2
+	sudo apt install apache2 -y &> /dev/null
+	printSuccess "Apache Installed"
+	printInfo "${Yellow}${Bold}Apache `apache2 -v`${Rst}"
 
 	while true
 	do
@@ -192,7 +189,7 @@ apacheInstall () {
 addSite () {
 	siteURL=$1
 
-	#used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
+	# Used for directory name (which is without domain TLD, example.com site folder would be "example" not "example.com")
 	siteNameNoTLD=`echo -e $siteURL | cut -d'.' -f1`
 
 	printInfo "Creating directory & adding permissions"
@@ -201,7 +198,7 @@ addSite () {
 	sudo chmod -R 755 /var/www
 	printSuccess "Done"
 
-	#create temporary index.html page for viewing
+	# Create temporary index.html page for viewing
 	sudo echo -e "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" &> /var/www/$siteNameNoTLD/index.html
 
 	printSuccess "Site $siteURL created"
@@ -222,11 +219,9 @@ sslInstall () {
 	allSitesURL=""
 	allSitesCount=-1
 
-	dpkg -s certbot &> /dev/null
-	if [ $? -eq 1 ]; then
-		sudo apt install certbot python3-certbot-apache -y &> /dev/null
-		printSuccess "Installed Certbot"
-	fi
+	# Install certbot to install and manage SSL
+	sudo apt install certbot python3-certbot-apache -y &> /dev/null
+	printSuccess "Installed Certbot"
 
 	while true
 	do
