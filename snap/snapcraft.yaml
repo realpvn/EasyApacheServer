@@ -17,7 +17,7 @@ parts:
     source: .
     stage-packages:
       - curl
-      - dpkg
+      - apache2
 
 apps:
   easy-apache:
