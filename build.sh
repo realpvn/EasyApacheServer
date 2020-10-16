@@ -29,6 +29,7 @@ makeDeb () {
                 esac;;
             * ) exit;;
     esac
+    currentVersion
     dh_make -p easy-apache_$curVer --indep --createorig -c gpl3 -e realpvn@gmail.com
 }
 

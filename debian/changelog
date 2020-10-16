@@ -1,3 +1,11 @@
+easy-apache (2.13-1) focal; urgency=medium
+
+  * Added man page for more details about easy-apache
+  * Improvements while showing banner
+  * Removed code which tried to install packages again 
+
+ -- Pavan Kumar <realpvn@gmail.com>  Fri, 16 Oct 2020 21:35:20 +0530
+
 easy-apache (2.12-1) focal; urgency=medium
 
   * Remove dpkg usage since it will create problems for snap packages 
