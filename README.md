@@ -1,5 +1,7 @@
 # Easy Apache
-Easily setup Apache server by using this script, it takes you step by step and setup everything you need
+Easy Apache is a simple script that helps you setup an Apache server, configure it completely, and it also helps you in installing SSL certificates for all your Apache sites. It'll ask for a few inputs, like domain name, do you want to install SSL, etc that's it.
+
+It takes care of configuring Apache, setting up virtual hosts (vhosts), managing different directories for each site, enabling site, disabling sites, and even installing an SSL certificate to your Apache sites.
 
 ## Install
 Installing easy-apache on to your server is easy too. Just copy & paste below command(s) to your server terminal
