@@ -1,8 +1,15 @@
+curVer=0
+fullCurVer=0
 updateDebVersion() {
     oldVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`
     echo Old Version: $oldVer
     read -p "New Version: " ver
     dch -v $ver
+}
+
+currentVersion() {
+    fullCurVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`
+    curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1 | cut -d '-' -f1`
 }
 
 makeDeb () {
@@ -22,7 +29,6 @@ makeDeb () {
                 esac;;
             * ) exit;;
     esac
-    curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1 | cut -d '-' -f1`
     dh_make -p easy-apache_$curVer --indep --createorig -c gpl3 -e realpvn@gmail.com
 }
 
@@ -54,21 +60,30 @@ buildSnap() {
     snapcraft
 }
 
+debug() {
+    if [[ -e ../easy-apache_$fullCurVer.dsc ]]
+    then
+        echo "Debugging .dsc file"
+        lintian ../easy-apache_$fullCurVer.dsc
+        echo "----------------------"
+        lintian ../easy-apache_${fullCurVer}_all.deb
+    else
+        echo "You need to build before debugging"
+    fi
+}
+
 clean () {
     echo "Cleaning build"
     rm -f easy-apache ../easy-apache_*
-    git checkout debian/changelog
-    rm -f snap/easy-apache.sh
 }
 
 uploadPPA () {
-    curVer=`head -1 debian/changelog | cut -d '(' -f2 | cut -d ')' -f1`
-    echo "Current version: $curVer"
+    echo "Current version: $fullCurVer"
     read -p "Is the current version correct? (Y/N): " verCheck
     case $verCheck in
         [Yy]* ) echo "Starting Upload"
                 cd ..
-                dput ppa:realpvn/easy-apache easy-apache_${curVer}_source.changes;;
+                dput ppa:realpvn/easy-apache easy-apache_${fullCurVer}_source.changes;;
         [Nn]* ) echo "Terminating upload";;
             * ) echo "Wrong input";;
     esac
@@ -76,6 +91,7 @@ uploadPPA () {
 
 if [ "$1" != "" ]
 then
+    currentVersion
     PARAM=$1
     case $PARAM in
         -ds | --debSource ) buildDebSource;
@@ -84,7 +100,9 @@ then
                             exit;;
         -sn | --snap      ) buildSnap;
                             exit;;
-        -c | --clean      ) clean;
+        -c  | --clean     ) clean;
+                            exit;;
+        -d  | --debug     ) debug;
                             exit;;
         -u | --uploadPPA  ) uploadPPA;
                             exit;;

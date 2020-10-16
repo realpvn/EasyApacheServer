@@ -1,8 +1,9 @@
 #!/bin/bash
 
-sudo apt install curl -y &> /dev/null
-curl https://raw.githubusercontent.com/realpvn/easy-apache/master/easy-banner.txt
 serverIP=`curl -s icanhazip.com`
+banner() {
+	curl https://raw.githubusercontent.com/realpvn/easy-apache/master/easy-banner.txt
+}
 
 terminalColors () {
 	# Colors from - https://gist.github.com/5682077.git
@@ -51,11 +52,18 @@ printInfo() {
 }
 
 help () {
-	echo -e "${Bold}Usage:${Rst}\neasy-apache [options]\n\n${Bold}Options:${Rst}\n-f | --full:\t\tFull setup, default option if none is provided\n-a | --apache:\t\tAdding new site (includes apache install)\n-s | --SSL:\t\tInstall SSL certificate for sites available\n-h | --help:\t\tHelp (shows available commands)${Rst}"
+	banner
+	echo -e "${Bold}Usage:${Rst}\neasy-apache [options]\n\n${Bold}Options:${Rst}\n-f | --full:\t\tFull setup, default option if none is provided\n-a | --apache:\t\tAdding new site (includes apache install)\n-s | --SSL:\t\tInstall SSL certificate for sites available\n-h | --help:\t\tHelp (shows available commands)\n-v | --version:\t\tCheck easy-apache version${Rst}"
 	echo -e "\n${Bold}Example\n${Rst}easy-apache -f\t\t\t#for full installation i.e Apache & SSL certificate\neasy-apache --full\t\t#for full installation i.e Apache & SSL certificate\neasy-apache -a\t\t\t#for installating Apache server\neasy-apache -s\t\t\t#for installating SSL certificate"
 }
 
+version() {
+	version=`apt-cache show easy-apache | grep Version | cut -d ' ' -f2`
+	echo $version
+}
+
 apacheInstall () {
+	banner
 	printInfo "Server Public IP: ${Yellow}${Bold}"${serverIP}${Rst}
 
 	# Updating Server
@@ -74,7 +82,6 @@ apacheInstall () {
 	allSitesCount=-1
 
 	# Installing apache2
-	sudo apt install apache2 -y &> /dev/null
 	printSuccess "Apache Installed"
 	printInfo "${Yellow}${Bold}Apache `apache2 -v`${Rst}"
 
@@ -215,6 +222,7 @@ addSite () {
 }
 
 sslInstall () {
+	banner
 	printNormal "SSL Installation"
 	allSitesURL=""
 	allSitesCount=-1
@@ -306,20 +314,16 @@ sslInstall () {
 	done
 }
 
-apacheSSLInstall () {
-	apacheInstall
-	sslInstall
-}
-
 terminalColors
 if [ "$1" != "" ]
 then
     PARAM=$1
     case $PARAM in
-        -f | --full 	 ) apacheSSLInstall; exit;;
+        -f | --full 	 ) apacheInstall; sslInstall; exit;;
         -a | --apache 	 ) apacheInstall; exit;;
         -s | --SSL       ) sslInstall; exit;;
         -h | --help      ) help; exit;;
+		-v | --version   ) version; exit;;
                         *) help; exit;;
     esac
 fi
