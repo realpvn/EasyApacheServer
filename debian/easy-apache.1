@@ -2,34 +2,39 @@ Easy Apache (easy-apache)
 (C) Copyright 2020 R Pavan Kumar <realpvn@gmail.com>                                                                                            Git Manual                                                                                           GIT(1)
 
 NAME
-       easy-apache - tool to easily setup apache server and install ssl certificate
+       easy-apache - script to easily setup apache server and install ssl certificate
 
 SYNOPSIS
-        easy-apache [option]
+        Usage:
+        easy-apache [options]
+
         Options:
-        -f:   Full setup, installs apache and ssl for sites
-        -a:   Adding new site (includes apache install)
-        -s:   Install SSL certificate for sites available
-        -h:   Help (shows all commands)
+        -f | --full:            Full setup, default option if none is provided
+        -a | --apache:          Adding new site (includes apache install)
+        -s | --SSL:             Install SSL certificate for sites available
+        -h | --help:            Help (shows available commands)
 
         Example
-        ./easy-apache -f   #for full installation i.e Apache & SSL certificate
-        ./easy-apache -as  #for installating Apache server & SSL certificate
-        ./easy-apache -h   #for help
+        easy-apache -f                  #for full installation i.e Apache & SSL certificate
+        easy-apache --full              #for full installation i.e Apache & SSL certificate
+        easy-apache -a                  #for installating Apache server
+        easy-apache -s                  #for installating SSL certificate
 
 DESCRIPTION
-        Easy Apache is a simple script which helps in installing Apache server and SSL certificates for Apache sites.
-        It'll ask you for few questions like domain name, if you want to install SSL (Yes or No questions) etc other than that it does most of the things
-        like configuring apache, setting up virtual host, managing different directories for each site, enabling site, disabling default sites,
-        applying SSL certificate to domain only you specify.
+        Easy Apache is a simple script that helps you setup an Apache server, configure it completely, 
+        and it also helps you in installing SSL certificates for all your Apache sites.
+        It'll ask for a few inputs, like domain name, do you want to install SSL, etc that's it.
 
-        If you wish to contribute or report any issues, please report it on the github repository (https://github.com/realpvn/easy-apache.git)
+        It takes care of configuring Apache, setting up virtual hosts (vhosts), managing different directories for each site, 
+        enabling site, disabling sites, and even installing an SSL certificate to your Apache sites.
+
+        If you have any questions/issues, please let me know on the GitHub repository (https://github.com/realpvn/easy-apache/)
 
 OPTIONS
-        -f:   Full setup, installs apache and ssl for sites
-        -a:   Adding new site (includes apache install)
-        -s:   Install SSL certificate for sites available
-        -h:   Help (shows all commands)
+        -f | --full:    Full setup, installs apache and ssl for sites
+        -a | --apache:  Adding new site (includes apache install)
+        -s | --SSL:     Install SSL certificate for sites available
+        -h | --help:    Help (shows all commands)
 
 AUTHORS
         Copyright © 2020 R Pavan Kumar
