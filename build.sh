@@ -43,7 +43,7 @@ buildDebSource () {
 }
 
 buildDebBinary () {
-    echo "Note: Binary is only to use in github or distribute. Binary can't be uploaded to PPA"
+    echo "[!] Binary file cannot to uploaded to PPA"
     read -p "This will deleted any deb source files, do you want to proceed? (Y/N): " cleanNow
     case $cleanNow in
         [Yy]* ) echo "Continuing....";;
@@ -53,12 +53,6 @@ buildDebBinary () {
     esac
     makeDeb
     debuild
-}
-
-buildSnap() {
-    cp easy-apache.sh snap/
-    cd snap
-    snapcraft
 }
 
 debug() {
@@ -98,8 +92,6 @@ then
         -ds | --debSource ) buildDebSource;
                             exit;;
         -db | --debBinary ) buildDebBinary;
-                            exit;;
-        -sn | --snap      ) buildSnap;
                             exit;;
         -c  | --clean     ) clean;
                             exit;;
