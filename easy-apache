@@ -110,6 +110,11 @@ configureSite() {
 		siteEmail=dev@localhost
 	fi
 
+	if ! touch $_siteConfigPath
+	then
+		return 1
+	fi
+
 	if ! echo -e "<VirtualHost *:80>\n\tServerAdmin $email\n\tServerName $_site\n\tServerAlias www.$_site\n\tDocumentRoot $_siteDir\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee $_siteConfigPath > /dev/null
 	then
 		return 1
