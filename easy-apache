@@ -1,0 +1,278 @@
+#!/bin/bash
+
+_server_ip=$(curl -s icanhazip.com)
+
+_site=""
+_siteName=""
+_siteConfigPath=""
+_siteSSLConfigPath=""
+_siteDir=""
+_requireSSL="false"
+
+terminalColors () {
+	tc='\e['
+
+	red="${tc}31m"
+	green="${tc}32m"
+	yellow="${tc}33m"
+
+	bold="${tc}1m"    			# bold text only, keep colors
+	resetColor="${tc}0m"     	# Reset all coloring and style
+
+	crossed="\u2718"
+	ticked="✓"
+	exclamation="!"
+
+	normal=${bold}'[ * ]'
+	success=${bold}${green}'[ '${ticked}' ]'
+	failed=${bold}${red}'[ '${crossed}' ]'
+	info=${bold}${yellow}'[ '${exclamation}' ]'
+}
+
+help() {
+	curl https://raw.githubusercontent.com/realpvn/easy-apache/master/easy-banner.txt
+	echo -e "\tUsage:
+	easy-apache [domain] [options]
+
+	Options:
+	-s | --ssl\t\t\t\t\tSetup website with SSL certificate
+	-h | --help\t\t\t\t\tHelp (shows available commands)
+	-v | --version\t\t\t\t\tCheck easy-apache version
+
+	Example:
+	easy-apache\t\texample.com -s\t\t# setup site with ssl certificates
+	easy-apache\t\texample.com\t\t# setup site (without ssl)
+	"
+}
+
+version() {
+	version=$(apt-cache show easy-apache | grep Version | cut -d ' ' -f2)
+	echo "$version"
+}
+
+printMes() {
+	if [ -n "$1" ]
+	then
+		p=$1
+		message=$2
+		case $p in
+			-n		) echo -e "${normal} $message $resetColor";;
+			-s		) echo -e "${success} $message $resetColor";;
+			-f  	) echo -e "${failed} $message $resetColor";;
+			-i  	) echo -e "${info} $message $resetColor";;
+		esac
+	fi
+}
+
+# Apache.
+siteExist() {
+	if [ ! -e "$_siteConfigPath" ]
+	then
+		return 1
+	fi
+
+	printMes -i "Site already exists"
+	return 0
+}
+
+createDirForSite() {
+	if ! sudo mkdir -p "$_siteDir"
+	then
+		return 1
+	fi
+
+	if ! sudo chown -R "$USER":"$USER" "$_siteDir"
+	then
+		return 1
+	fi
+
+	if ! sudo chmod -R 755 "$_siteDir"
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+createIndexFile() {
+	# Create temporary index.html page for viewing
+	if ! echo -e "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" | sudo tee $_siteDir/index.html > /dev/null
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+configureSite() {
+	read -rp "Email (leave blank if not required):" email
+	if [ -z "$siteEmail" ]; then
+		siteEmail=dev@localhost
+	fi
+
+	if ! echo -e "<VirtualHost *:80>\n\tServerAdmin $email\n\tServerName $_site\n\tServerAlias www.$_site\n\tDocumentRoot $_siteDir\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee $_siteConfigPath > /dev/null
+	then
+		return 1
+	fi
+
+	if ! sudo a2ensite "$_siteConfigPath" &> /dev/null
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+addSite() {
+	printMes -n "Adding $_siteName to apache server"
+	if siteExist
+	then
+		return 0
+	fi
+
+	printMes -n "Creating directory for $_siteName"
+	if ! createDirForSite
+	then
+		printMes -f "Failed"
+		return 1
+	fi
+	printMes -s "Done"
+	
+	if ! createIndexFile
+	then
+		return 1
+	fi
+
+	printMes -n "Site configuration starting"
+	if ! configureSite
+	then
+		return 1
+	fi
+	printMes -s "Done"
+
+	return 0
+}
+
+# SSL.
+siteSSLExist() {
+	if [ -e "$_siteSSLConfigPath" ]
+	then
+		printMes -f "Site already has SSL configured"
+		return 1
+	fi
+
+	return 0
+}
+
+configureSSL() {
+	if ! sudo certbot --apache -d www."$_site" -d "$_site"
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+addSSL() {
+	printMes -n "Adding SSL to $_siteName"
+	if siteSSLExist
+	then
+		return 1
+	fi
+
+	if ! configureSSL
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+# Common.
+urlValid() {	
+	# regex to check URL with http/https or www
+	# (https:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"
+
+	# below regex checks site is example.com and not https://example.com
+	regex="^[a-z]{2,256}\.[a-z]{2,4}$"
+	if [[ ! $_site =~ $regex ]]
+	then
+		printMes -f "Looks like wrong domain name"
+		return 1
+	fi
+
+	return 0
+}
+
+# Init.
+init() {
+	# Initialize all variables.
+	terminalColors
+	_site=$1
+
+	# Remove domain tld below, i.e from site `example.com` to `example`.
+	_siteName=$(echo -e "$_site" | cut -d'.' -f1)
+
+	_siteConfigPath="/etc/apache2/sites-available/$_site.conf"
+	_siteSSLConfigPath="/etc/apache2/sites-available/$_site-le-ssl.conf"
+	_siteDir="/var/www/$_siteName"
+
+	return 0
+}
+
+start() {
+	printMes -i "Server IP: $_server_ip"
+
+	if ! addSite
+	then
+		return 1
+	fi
+
+	if [ "$_requireSSL" = "false" ]
+	then
+		printMes -n "Skipping SSL installation"
+		return 0
+	fi
+
+	if ! addSSL
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+# Exit if arguments passed is 0 or arguments passed is greater than 2 (which is not required).
+if [ $# -eq 0 ] && [ $# -gt 2 ]
+  then
+    printMes -f "Wrong number of arguments passed"
+	exit 0
+fi
+
+# Check if $1 is an option.
+if [ -n "$1" ]
+then
+	p=$1
+	case $p in
+		-s | --ssl       ) _requireSSL="true";;
+		-h | --help      ) help; exit 0;;
+		-v | --version   ) version; exit 0;;
+				 	   -*) help; exit 0;;
+	esac
+fi
+
+# If _requireSSL is still false which means $1 was domain name as per user.
+if [ "$_requireSSL" = "false" ]
+then
+	init "$1"
+else
+	init "$2"
+fi
+
+# Validate user passed value is actually a domain or not.
+if ! urlValid
+then
+	exit 0
+fi
+
+start
