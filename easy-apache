@@ -110,18 +110,15 @@ configureSite() {
 		siteEmail=dev@localhost
 	fi
 
-	if ! touch $_siteConfigPath
-	then
-		return 1
-	fi
-
 	if ! echo -e "<VirtualHost *:80>\n\tServerAdmin $email\n\tServerName $_site\n\tServerAlias www.$_site\n\tDocumentRoot $_siteDir\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee $_siteConfigPath > /dev/null
 	then
+		printMes -f "Failed Configuring virtual hosts"
 		return 1
 	fi
 
 	if ! sudo a2ensite "$_siteConfigPath" &> /dev/null
 	then
+		printMes -f "Failed to enable site"
 		return 1
 	fi
 
@@ -225,11 +222,12 @@ init() {
 	return 0
 }
 
-start() {
+pgExec() {
 	printMes -i "Server IP: $_server_ip"
 
 	if ! addSite
 	then
+		printMes -f "Failed when adding domain"
 		return 1
 	fi
 
@@ -241,9 +239,11 @@ start() {
 
 	if ! addSSL
 	then
+		printMes -f "Failed adding SSL"
 		return 1
 	fi
 
+	printMes -s "Success"
 	return 0
 }
 
@@ -280,4 +280,7 @@ then
 	exit 0
 fi
 
-start
+if ! pgExec
+then
+	exit 1
+fi
