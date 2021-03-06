@@ -23,7 +23,7 @@ Usage:
 easy-apache [domain] [options]
 
 Options:
--s | --ssl              Setup website with SSL certificate
+-s | --ssl              Setup domain with SSL certificate
 -h | --help             Help (shows available commands)
 -v | --version          Check easy-apache version
 
