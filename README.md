@@ -12,30 +12,25 @@ sudo apt update
 sudo apt install easy-apache
 ```
 ## Run
-One command to setup everything, installs Apache & SSL
+One command to setup a domain
 ```
-easy-apache -f
+easy-apache [domain]
 ```
-That is it! 🤩
-  
   
 ## Options & Usage
 ```
 Usage:
-easy-apache [options]
+easy-apache [domain] [options]
 
 Options:
--f | --full:            Full Apache server setup, adding site(s), virtual hosts (vhosts) & adding SSL certificate(s)
--a | --apache:          Adding new site (includes apache install)
--s | --SSL:             Install SSL certificate for sites available
--h | --help:            Help (shows available commands)
+-s | --ssl              Setup website with SSL certificate
+-h | --help             Help (shows available commands)
 -v | --version          Check easy-apache version
 
-Example
-easy-apache -f                  #to setup Apache, add sites & install SSL certificate
-easy-apache --apache            #to install Apache server
+Example:
+easy-apache example.com -s          # setup site with ssl certificates
+easy-apache example.com             # setup site (without ssl)
 ```
-
 
 ## Works on
 - Ubuntu 20.04 (focal)  
