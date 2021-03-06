@@ -56,10 +56,10 @@ printMes() {
 		p=$1
 		message=$2
 		case $p in
-			-n		) echo -e "${normal} $message $resetColor";;
-			-s		) echo -e "${success} $message $resetColor";;
-			-f  	) echo -e "${failed} $message $resetColor";;
-			-i  	) echo -e "${info} $message $resetColor";;
+			-n		) echo -e "${normal}$message $resetColor";;
+			-s		) echo -e "${success}$message $resetColor";;
+			-f  	) echo -e "${failed}$message $resetColor";;
+			-i  	) echo -e "${info}$message $resetColor";;
 		esac
 	fi
 }
@@ -257,7 +257,7 @@ then
 		-s | --ssl       ) _requireSSL="true";;
 		-h | --help      ) help; exit 0;;
 		-v | --version   ) version; exit 0;;
-				 	   -*) help; exit 0;;
+				 	   -*) printMes -n "Invalid Option"; exit 0;;
 	esac
 fi
 
