@@ -9,6 +9,8 @@ _siteSSLConfigPath=""
 _siteDir=""
 _requireSSL="false"
 
+_version="3.0"
+
 terminalColors () {
 	tc='\e['
 
@@ -23,10 +25,10 @@ terminalColors () {
 	ticked="✓"
 	exclamation="!"
 
-	normal=${bold}'[ * ]'
-	success=${bold}${green}'[ '${ticked}' ]'
-	failed=${bold}${red}'[ '${crossed}' ]'
-	info=${bold}${yellow}'[ '${exclamation}' ]'
+	normal=${bold}'[ * ] '
+	success=${bold}${green}'[ '${ticked}' ] '
+	failed=${bold}${red}'[ '${crossed}' ] '
+	info=${bold}${yellow}'[ '${exclamation}' ] '
 }
 
 help() {
