@@ -67,6 +67,11 @@ printMes() {
 }
 
 # Apache.
+revertApache() {
+	sudo rm -rf "$_siteDir"
+	sudo rm -f "$_siteConfigPath"
+}
+
 siteExist() {
 	if [ ! -e "$_siteConfigPath" ]
 	then
@@ -317,6 +322,9 @@ pgExec() {
 	if ! addSite
 	then
 		printMes -f "Failed when adding domain"
+		printMes -n "Reverting changes..."
+		revertApache
+		printMes -n "Revert done"
 		return 1
 	fi
 
