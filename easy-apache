@@ -241,7 +241,7 @@ siteSSLExist() {
 }
 
 configureSSL() {
-	if ! sudo certbot --apache -d www."$_site" -d "$_site"
+	if ! sudo certbot --apache -d "www.$_site" -d "$_site"
 	then
 		return 1
 	fi
