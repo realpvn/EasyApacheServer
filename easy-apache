@@ -107,7 +107,7 @@ createIndexFile() {
 configureSite() {
 	read -rp "Email (leave blank if not required):" email
 	if [ -z "$email" ]; then
-		email=dev@localhost
+		email="dev@localhost"
 	fi
 
 	if ! echo -e "<VirtualHost *:80>\n\tServerAdmin $email\n\tServerName $_site\n\tServerAlias www.$_site\n\tDocumentRoot $_siteDir\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee $_siteConfigPath &> /dev/null
