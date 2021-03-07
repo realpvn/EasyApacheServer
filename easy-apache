@@ -37,9 +37,9 @@ help() {
 	easy-apache [options] [domain]
 
 	Options:
-	-s | --ssl\t\t\t\t\tSetup domain with SSL certificate
-	-h | --help\t\t\t\t\tHelp (shows available commands)
-	-v | --version\t\t\t\t\tCheck easy-apache version
+	-s | --ssl\t\tSetup domain with SSL certificate
+	-h | --help\t\tHelp (shows available commands)
+	-v | --version\t\tCheck easy-apache version
 
 	Example:
 	easy-apache -s example.com\t\t# setup domain with ssl certificates
