@@ -10,6 +10,6 @@ Homepage: https://github.com/realpvn/easy-apache.git
 
 Package: easy-apache
 Architecture: all
-Depends: ${misc:Depends}, apache2 (>= 2.4), curl (>= 7.68)
+Depends: ${misc:Depends}, apache2 (>= 2.4), curl (>= 7.68), certbot (>= 0.40), python3-certbot-apache (>= 0.40)
 Description: Script to easily setup apache server and install ssl certificate.
  It will automatically configure apache and install SSL for you apache sites.
