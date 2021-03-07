@@ -106,11 +106,11 @@ createIndexFile() {
 
 configureSite() {
 	read -rp "Email (leave blank if not required):" email
-	if [ -z "$siteEmail" ]; then
-		siteEmail=dev@localhost
+	if [ -z "$email" ]; then
+		email=dev@localhost
 	fi
 
-	if ! echo -e "<VirtualHost *:80>\n\tServerAdmin $email\n\tServerName $_site\n\tServerAlias www.$_site\n\tDocumentRoot $_siteDir\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee $_siteConfigPath > /dev/null
+	if ! echo -e "<VirtualHost *:80>\n\tServerAdmin $email\n\tServerName $_site\n\tServerAlias www.$_site\n\tDocumentRoot $_siteDir\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee $_siteConfigPath &> /dev/null
 	then
 		printMes -f "Failed Configuring virtual hosts"
 		return 1
