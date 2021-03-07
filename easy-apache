@@ -187,17 +187,20 @@ configureSSL() {
 }
 
 addSSL() {
-	printMes -n "Adding SSL to $_siteName"
+	printMes -n "Adding SSL to $_site"
 	if siteSSLExist
 	then
+		printMes -f "SSL already enabled for $_site"
 		return 1
 	fi
 
 	if ! configureSSL
 	then
+		printMes -f "SSL configuration failed"
 		return 1
 	fi
 
+	printMes -s "Done"
 	return 0
 }
 
