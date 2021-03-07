@@ -118,7 +118,7 @@ configureSite() {
 		return 1
 	fi
 
-	if ! sudo a2ensite "$_siteConfigPath" &> /dev/null
+	if ! sudo a2ensite "$_site" &> /dev/null
 	then
 		printMes -f "Failed to enable site"
 		return 1
@@ -237,7 +237,6 @@ siteSSLExist() {
 		return 1
 	fi
 	
-	printMes -f "Site already has SSL configured"
 	return 0
 }
 
@@ -255,7 +254,7 @@ addSSL() {
 	if siteSSLExist
 	then
 		printMes -f "SSL already enabled for $_site"
-		return 1
+		return 0
 	fi
 
 	if ! configureSSL
@@ -332,7 +331,7 @@ pgExec() {
 		return 1
 	fi
 
-	printMes -s "Success"
+	printMes -s "Finished"
 	return 0
 }
 
