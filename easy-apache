@@ -1,0 +1,382 @@
+#!/bin/bash
+
+_server_ip=$(curl -s icanhazip.com)
+
+_site=""
+_siteName=""
+_siteConfigPath=""
+_siteSSLConfigPath=""
+_siteDir=""
+_requireSSL="false"
+
+_version="3.0"
+
+terminalColors () {
+	tc='\e['
+
+	red="${tc}31m"
+	green="${tc}32m"
+	yellow="${tc}33m"
+
+	bold="${tc}1m"    			# bold text only, keep colors
+	resetColor="${tc}0m"     	# Reset all coloring and style
+
+	crossed="\u2718"
+	ticked="✓"
+	exclamation="!"
+
+	normal=${bold}'[ * ] '
+	success=${bold}${green}'[ '${ticked}' ] '
+	failed=${bold}${red}'[ '${crossed}' ] '
+	info=${bold}${yellow}'[ '${exclamation}' ] '
+}
+
+help() {
+	curl https://raw.githubusercontent.com/realpvn/easy-apache/master/easy-banner.txt
+	echo -e "\tUsage:
+	easy-apache [options] [domain]
+
+	Options:
+	-s | --ssl\t\tSetup domain with SSL certificate
+	-h | --help\t\tHelp (shows available commands)
+	-v | --version\t\tCheck easy-apache version
+
+	Example:
+	easy-apache -s example.com\t\t# setup domain with ssl certificates
+	easy-apache example.com\t\t\t# setup domain (without ssl)
+	easy-apache -h\t\t\t\t# show help
+	"
+}
+
+version() {
+	echo "Easy Apache $_version"
+}
+
+printMes() {
+	if [ -n "$1" ]
+	then
+		p=$1
+		message=$2
+		case $p in
+			-n		) echo -e "${normal}$message $resetColor";;
+			-s		) echo -e "${success}$message $resetColor";;
+			-f  	) echo -e "${failed}$message $resetColor";;
+			-i  	) echo -e "${info}$message $resetColor";;
+		esac
+	fi
+}
+
+# Apache.
+revertApache() {
+	sudo rm -rf "$_siteDir"
+	sudo rm -f "$_siteConfigPath"
+}
+
+siteExist() {
+	if [ ! -e "$_siteConfigPath" ]
+	then
+		return 1
+	fi
+
+	printMes -i "Site already exists"
+	return 0
+}
+
+createDirForSite() {
+	if ! sudo mkdir -p "$_siteDir"
+	then
+		return 1
+	fi
+
+	if ! sudo chown -R "$USER":"$USER" "$_siteDir"
+	then
+		return 1
+	fi
+
+	if ! sudo chmod -R 755 "$_siteDir"
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+createIndexFile() {
+	# Create temporary index.html page for viewing
+	if ! echo -e "<h1>Server setup by <a href='https://github.com/realpvn/easy-apache.git'>easy-apache</a> (https://github.com/realpvn/easy-apache.git) </h1>" | sudo tee $_siteDir/index.html > /dev/null
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+configureSite() {
+	read -rp "Email (leave blank if not required):" email
+	if [ -z "$email" ]; then
+		email="dev@localhost"
+	fi
+
+	if ! echo -e "<VirtualHost *:80>\n\tServerAdmin $email\n\tServerName $_site\n\tServerAlias www.$_site\n\tDocumentRoot $_siteDir\n\tErrorLog \${APACHE_LOG_DIR}/error.log\n\tCustomLog \${APACHE_LOG_DIR}/access.log combined\n</VirtualHost>" | sudo tee $_siteConfigPath &> /dev/null
+	then
+		printMes -f "Failed Configuring virtual hosts"
+		return 1
+	fi
+
+	if ! sudo a2ensite "$_site" &> /dev/null
+	then
+		printMes -f "Failed to enable site"
+		return 1
+	fi
+
+	return 0
+}
+
+ufwEnabled() {
+	if sudo ufw status | grep -q inactive$
+	then
+		printMes -i "UFW Firewall is disabled, you need to enable UFW to continue.."
+		read -rp "Do you want to enable it now? (y/N)" enableUfw
+		case $enableUfw in
+				[Yy]*) if echo "y" | sudo ufw enable &> /dev/null
+						then
+							if ! sudo ufw allow ssh &> /dev/null
+							then
+								printMes -f "Could not allow ssh in ufw to maintain ssh connection"
+								printMes -f "Reverting all changes to ufw"
+								echo "y" | sudo ufw disable &> /dev/null
+								return 1
+							fi
+
+							return 0
+						fi
+						return 1;;
+					*) printMes -f "UFW needs to be enabled"; return 1;;
+		esac
+	fi
+
+	printMes -n "UFW already enabled"
+	return 0
+}
+
+ufwAllow() {
+	service=$1
+	if ! ufwEnabled
+	then
+		return 1
+	fi
+
+	if ! sudo ufw allow "$service" &> /dev/null
+	then
+		printMes -f "Failed to Allow $service in ufw"
+		return 1
+	fi
+
+	return 0
+}
+
+ufwDisAllow() {
+	service=$1
+	if ! ufwEnabled
+	then
+		return 1
+	fi
+
+	if ! sudo ufw delete allow "$service" &> /dev/null
+	then
+		printMes -f "Failed to disable $service in ufw"
+		return 1
+	fi
+
+	return 0
+}
+
+addSite() {
+	printMes -n "Adding $_site to apache server"
+	if siteExist
+	then
+		return 0
+	fi
+
+	printMes -n "Creating directory for $_site"
+	if ! createDirForSite
+	then
+		printMes -f "Failed creating directory for $_site"
+		return 1
+	fi
+	printMes -s "Done"
+	
+	if ! createIndexFile
+	then
+		printMes -f "Failed when creating index file for $_site"
+		return 1
+	fi
+
+	printMes -n "Site configuration starting"
+	if ! configureSite
+	then
+		printMes -f "Site configuration failed"
+		return 1
+	fi
+
+	printMes -n "Restarting apache to apply changes"
+	if ! eval "$(sudo systemctl reload apache2)"
+	then
+		printMes -f "Failed to restart apache server"
+		return 1
+	fi
+
+	if ! ufwAllow "Apache"
+	then
+		return 1
+	fi
+
+	printMes -s "Done"
+	return 0
+}
+
+# SSL.
+siteSSLExist() {
+	if [ ! -e "$_siteSSLConfigPath" ]
+	then
+		return 1
+	fi
+	
+	return 0
+}
+
+configureSSL() {
+	if ! sudo certbot --apache -d "www.$_site" -d "$_site"
+	then
+		return 1
+	fi
+
+	return 0
+}
+
+addSSL() {
+	printMes -n "Adding SSL to $_site"
+	if siteSSLExist
+	then
+		printMes -f "SSL already enabled for $_site"
+		return 0
+	fi
+
+	if ! configureSSL
+	then
+		printMes -f "SSL configuration failed"
+		return 1
+	fi
+
+	if ! ufwDisAllow "Apache"
+	then
+		printMes -f "Could not disallow apache in ufw"
+		return 1
+	fi
+
+	if ! ufwAllow "Apache Full"
+	then
+		printMes -f "Could not allow Apache Full in ufw"
+		return 1
+	fi
+
+	printMes -s "Done"
+	return 0
+}
+
+# Common.
+urlValid() {	
+	# regex to check URL with http/https or www
+	# (https:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"
+
+	# below regex checks site is example.com and not https://example.com
+	regex="^[a-z0-9]{2,256}\.[a-z]{2,4}$"
+	if [[ ! $_site =~ $regex ]]
+	then
+		printMes -f "Looks like wrong or no domain name"
+		return 1
+	fi
+
+	return 0
+}
+
+# Init.
+init() {
+	# Initialize all variables.
+	terminalColors
+	_site=$1
+
+	# Remove domain tld below, i.e from site `example.com` to `example`.
+	_siteName=$(echo -e "$_site" | cut -d'.' -f1)
+
+	_siteConfigPath="/etc/apache2/sites-available/$_site.conf"
+	_siteSSLConfigPath="/etc/apache2/sites-available/$_site-le-ssl.conf"
+	_siteDir="/var/www/$_siteName"
+
+	return 0
+}
+
+pgExec() {
+	printMes -i "Server IP: $_server_ip"
+
+	if ! addSite
+	then
+		printMes -f "Failed when adding domain"
+		printMes -n "Reverting changes..."
+		revertApache
+		printMes -n "Revert done"
+		return 1
+	fi
+
+	if [ "$_requireSSL" = "false" ]
+	then
+		return 0
+	fi
+
+	if ! addSSL
+	then
+		printMes -f "Failed adding SSL"
+		return 1
+	fi
+
+	printMes -s "Finished"
+	return 0
+}
+
+# Exit if arguments passed is 0 or arguments passed is greater than 2 (which is not required).
+if [ $# -eq 0 ] && [ $# -gt 2 ]
+  then
+    printMes -f "Wrong number of arguments passed"
+	exit 0
+fi
+
+# Check if $1 is an option.
+if [ -n "$1" ]
+then
+	p=$1
+	case $p in
+		-s | --ssl       ) _requireSSL="true";;
+		-h | --help      ) help; exit 0;;
+		-v | --version   ) version; exit 0;;
+				 	   -*) printMes -n "Invalid Option"; exit 0;;
+	esac
+fi
+
+# If _requireSSL is still false which means $1 was domain name as per user.
+if [ "$_requireSSL" = "false" ]
+then
+	init "$1"
+else
+	init "$2"
+fi
+
+# Validate user passed value is actually a domain or not.
+if ! urlValid
+then
+	exit 0
+fi
+
+if ! pgExec
+then
+	exit 1
+fi
