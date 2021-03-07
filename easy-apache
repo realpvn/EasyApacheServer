@@ -168,12 +168,12 @@ addSite() {
 
 # SSL.
 siteSSLExist() {
-	if [ -e "$_siteSSLConfigPath" ]
+	if [ ! -e "$_siteSSLConfigPath" ]
 	then
-		printMes -f "Site already has SSL configured"
 		return 1
 	fi
-
+	
+	printMes -f "Site already has SSL configured"
 	return 0
 }
 
