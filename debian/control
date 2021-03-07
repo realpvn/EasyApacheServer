@@ -5,8 +5,6 @@ Maintainer: R Pavan Kumar <realpvn@gmail.com>
 Build-Depends: debhelper-compat (= 12)
 Standards-Version: 4.4.1
 Homepage: https://github.com/realpvn/easy-apache.git
-#Vcs-Browser: https://salsa.debian.org/debian/easy-apache
-#Vcs-Git: https://salsa.debian.org/debian/easy-apache.git
 
 Package: easy-apache
 Architecture: all
