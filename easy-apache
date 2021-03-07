@@ -127,6 +127,65 @@ configureSite() {
 	return 0
 }
 
+ufwEnabled() {
+	if sudo ufw status | grep -q inactive$
+	then
+		printMes -i "UFW Firewall is disabled, you need to enable UFW to continue.."
+		read -rp "Do you want to enable it now? (y/N)" enableUfw
+		case $enableUfw in
+				[Yy]*) if echo "y" | sudo ufw enable &> /dev/null
+						then
+							if ! sudo ufw allow ssh &> /dev/null
+							then
+								printMes -f "Could not allow ssh in ufw to maintain ssh connection"
+								printMes -f "Reverting all changes to ufw"
+								echo "y" | sudo ufw disable &> /dev/null
+								return 1
+							fi
+
+							return 0
+						fi
+						return 1;;
+					*) printMes -f "UFW needs to be enabled"; return 1;;
+		esac
+	fi
+
+	printMes -n "UFW already enabled"
+	return 0
+}
+
+ufwAllow() {
+	service=$1
+	if ! ufwEnabled
+	then
+		return 1
+	fi
+
+	if ! sudo ufw allow "$service" &> /dev/null
+	then
+		printMes -f "Failed to Allow $service in ufw"
+		return 1
+	fi
+
+	return 0
+}
+
+ufwDisAllow() {
+	service=$1
+	if ! ufwEnabled
+	then
+		return 1
+	fi
+
+	if ! sudo ufw delete allow "$service" &> /dev/null
+	then
+		printMes -f "Failed to disable $service in ufw"
+		return 1
+	fi
+
+	return 0
+}
+
 addSite() {
 	printMes -n "Adding $_site to apache server"
 	if siteExist
@@ -156,9 +215,14 @@ addSite() {
 	fi
 
 	printMes -n "Restarting apache to apply changes"
-	if ! sudo systemctl reload apache2
+	if ! eval "$(sudo systemctl reload apache2)"
 	then
 		printMes -f "Failed to restart apache server"
+		return 1
+	fi
+
+	if ! ufwAllow "Apache"
+	then
 		return 1
 	fi
 
@@ -197,6 +261,18 @@ addSSL() {
 	if ! configureSSL
 	then
 		printMes -f "SSL configuration failed"
+		return 1
+	fi
+
+	if ! ufwDisAllow "Apache"
+	then
+		printMes -f "Could not disallow apache in ufw"
+		return 1
+	fi
+
+	if ! ufwAllow "Apache Full"
+	then
+		printMes -f "Could not allow Apache Full in ufw"
 		return 1
 	fi
 
