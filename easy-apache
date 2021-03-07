@@ -42,8 +42,8 @@ help() {
 	-v | --version\t\t\t\t\tCheck easy-apache version
 
 	Example:
-	easy-apache -s example.com\t\t# setup site with ssl certificates
-	easy-apache example.com\t\t\t# setup site (without ssl)
+	easy-apache -s example.com\t\t# setup domain with ssl certificates
+	easy-apache example.com\t\t\t# setup domain (without ssl)
 	easy-apache -h\t\t\t\t# show help
 	"
 }

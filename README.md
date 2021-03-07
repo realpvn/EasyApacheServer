@@ -28,8 +28,8 @@ Options:
 -v | --version      Check easy-apache version
 
 Example:
-easy-apache -s example.com      # setup site with ssl certificates
-easy-apache example.com         # setup site (without ssl)
+easy-apache -s example.com      # setup domain with ssl certificates
+easy-apache example.com         # setup domain (without ssl)
 easy-apache -h                  # show help
 ```
 
