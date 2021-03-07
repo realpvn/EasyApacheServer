@@ -128,32 +128,41 @@ configureSite() {
 }
 
 addSite() {
-	printMes -n "Adding $_siteName to apache server"
+	printMes -n "Adding $_site to apache server"
 	if siteExist
 	then
 		return 0
 	fi
 
-	printMes -n "Creating directory for $_siteName"
+	printMes -n "Creating directory for $_site"
 	if ! createDirForSite
 	then
-		printMes -f "Failed"
+		printMes -f "Failed creating directory for $_site"
 		return 1
 	fi
 	printMes -s "Done"
 	
 	if ! createIndexFile
 	then
+		printMes -f "Failed when creating index file for $_site"
 		return 1
 	fi
 
 	printMes -n "Site configuration starting"
 	if ! configureSite
 	then
+		printMes -f "Site configuration failed"
 		return 1
 	fi
-	printMes -s "Done"
 
+	printMes -n "Restarting apache to apply changes"
+	if ! sudo systemctl reload apache2
+	then
+		printMes -f "Failed to restart apache server"
+		return 1
+	fi
+
+	printMes -s "Done"
 	return 0
 }
 
@@ -235,7 +244,6 @@ pgExec() {
 
 	if [ "$_requireSSL" = "false" ]
 	then
-		printMes -n "Skipping SSL installation"
 		return 0
 	fi
 
