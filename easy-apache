@@ -48,8 +48,7 @@ help() {
 }
 
 version() {
-	version=$(apt-cache show easy-apache | grep Version | cut -d ' ' -f2)
-	echo "$version"
+	echo "Easy Apache $_version"
 }
 
 printMes() {
