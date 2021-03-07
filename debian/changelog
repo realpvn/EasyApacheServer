@@ -1,3 +1,9 @@
+easy-apache (3.1-1) focal; urgency=medium
+
+  * Fixed small issue where banner would not print
+
+ -- Pavan Kumar <realpvn@gmail.com>  Sun, 07 Mar 2021 17:37:44 +0530
+
 easy-apache (3.0-1) focal; urgency=medium
 
   * Major improvements to how the script runs and handles errors
