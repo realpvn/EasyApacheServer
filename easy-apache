@@ -201,7 +201,7 @@ urlValid() {
 	regex="^[a-z0-9]{2,256}\.[a-z]{2,4}$"
 	if [[ ! $_site =~ $regex ]]
 	then
-		printMes -f "Looks like wrong domain name"
+		printMes -f "Looks like wrong or no domain name"
 		return 1
 	fi
 
