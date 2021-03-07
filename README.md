@@ -20,16 +20,17 @@ easy-apache [domain]
 ## Options & Usage
 ```
 Usage:
-easy-apache [domain] [options]
+easy-apache [options] [domain]
 
 Options:
--s | --ssl              Setup domain with SSL certificate
--h | --help             Help (shows available commands)
--v | --version          Check easy-apache version
+-s | --ssl          Setup domain with SSL certificate
+-h | --help         Help (shows available commands)
+-v | --version      Check easy-apache version
 
 Example:
-easy-apache example.com -s          # setup site with ssl certificates
-easy-apache example.com             # setup site (without ssl)
+easy-apache -s example.com      # setup site with ssl certificates
+easy-apache example.com         # setup site (without ssl)
+easy-apache -h                  # show help
 ```
 
 ## Works on
