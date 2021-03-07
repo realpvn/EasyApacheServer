@@ -16,8 +16,6 @@ currentVersion() {
 
 makeDeb () {
     echo "Running make"
-    clean
-    cp easy-apache.sh easy-apache
     read -p "Have you updated version? (Y/N): " verUpdate
     case $verUpdate in
         [Yy]* ) echo "Continuing....";;
@@ -45,14 +43,7 @@ buildDebSource () {
 }
 
 buildDebBinary () {
-    echo "[!] Binary file cannot to uploaded to PPA"
-    read -p "This will deleted any deb source files, do you want to proceed? (Y/N): " cleanNow
-    case $cleanNow in
-        [Yy]* ) echo "Continuing....";;
-        [Nn]* ) echo "You must clean to build binary, exiting..."
-                exit;;
-            * ) exit;;
-    esac
+    echo "[!] Binary file cannot be uploaded to PPA"
     makeDeb
     debuild
 }
@@ -67,11 +58,6 @@ debug() {
     else
         echo "You need to build before debugging"
     fi
-}
-
-clean () {
-    echo "Cleaning build"
-    rm -f easy-apache ../easy-apache_*
 }
 
 uploadPPA () {
@@ -95,14 +81,12 @@ then
                             exit;;
         -db | --debBinary ) buildDebBinary;
                             exit;;
-        -c  | --clean     ) clean;
-                            exit;;
         -d  | --debug     ) debug;
                             exit;;
         -u | --uploadPPA  ) uploadPPA;
                             exit;;
-                        * ) echo -e "Usage:\n-ds | --debSource:\t Generates debian source file\n-db | --debBinary:\t Generates debian binary file\n-sn | --snap:\t\t Generates Snap Package\n-c | --clean:\t\t Cleans directory, removes all build files etc\n-u | --uploadPPA:\t Uploads source file to PPA";
+                        * ) echo -e "Usage:\n-ds | --debSource:\t Generates debian source file\n-db | --debBinary:\t Generates debian binary file\n-sn | --snap:\t\t Generates Snap Package\n-c | --uploadPPA:\t Uploads source file to PPA";
                             exit;;
     esac
 fi
-echo -e "Usage:\n-ds | --debSource:\t Generates debian source file\n-db | --debBinary:\t Generates debian binary file\n-sn | --snap:\t Generates Snap Package\n-c | --clean:\t\t Cleans directory, removes all build files etc\n-u | --uploadPPA:\t Uploads source file to PPA";
+echo -e "Usage:\n-ds | --debSource:\t Generates debian source file\n-db | --debBinary:\t Generates debian binary file\n-sn | --snap:\t Generates Snap Package\n-c | --uploadPPA:\t Uploads source file to PPA";

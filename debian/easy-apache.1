@@ -11,14 +11,8 @@ Easy Apache is a simple script that helps you setup an Apache server, configure 
 It takes care of configuring Apache, setting up virtual hosts (vhosts), managing different directories for each site, enabling site, disabling sites, and even installing an SSL certificate to your Apache sites.
 .SH OPTIONS
 .TP
-.BR \-f ", " \-\-full
-Full Apache server setup, adding site(s), virtual hosts (vhosts) & adding SSL certificate(s)
-.TP
-.BR \-a ", " \-\-apache
-Adding new site(s) (includes apache install)
-.TP
-.BR \-s ", " \-\-SSL
-Install SSL certificate for site(s) available
+.BR \-s ", " \-\-ssl
+Setup domain with SSL certificates
 .TP
 .BR \-h ", " \-\-help
 Help (shows available commands)
@@ -27,11 +21,8 @@ Help (shows available commands)
 Check easy-apache version
 .SH EXAMPLES
 .TP
-.BR easy-apache " " \-f 
-Full Setup of Apache server, adding site(s) & adding SSL certificate(s)
-.TP
-.BR easy-apache " " \--apache
-To setup Apache server & add site(s)
+.BR easy-apache " " \-s example.com 
+Setup domain with ssl certificates
 .SH AUTHORS
 .PP
 (C) Copyright 2020 R Pavan Kumar <realpvn@gmail.com>
