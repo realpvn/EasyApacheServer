@@ -1,3 +1,15 @@
+easy-apache (3.0-1) focal; urgency=medium
+
+  * Major improvements to how the script runs and handles errors
+  * Easier way to add new sites
+  * Option to add SSL certificates to already existing sites
+  * When domain setup fails, everything done will be reverted, helping keep 
+    system clean
+  * Fixed version showing not showing as expected
+  * Script should be faster than older version
+
+ -- Pavan Kumar <realpvn@gmail.com>  Sun, 07 Mar 2021 16:59:07 +0530
+
 easy-apache (2.13-1) focal; urgency=medium
 
   * Added man page for more details about easy-apache

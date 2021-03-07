@@ -32,7 +32,7 @@ terminalColors () {
 }
 
 help() {
-	curl https://raw.githubusercontent.com/realpvn/easy-apache/master/easy-banner.txt
+	curl https://raw.githubusercontent.com/realpvn/easy-apache/master/banner
 	echo -e "\tUsage:
 	easy-apache [options] [domain]
 
